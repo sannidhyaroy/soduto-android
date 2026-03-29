@@ -1,0 +1,69 @@
+# Soduto Android: Rebase Sync Log
+#
+# Append-only history of every rebase of main onto upstream/master.
+# PATCH.yaml holds only the latest rebase snapshot; this file is the
+# permanent record.
+#
+# WHY THIS FILE EXISTS:
+#   Reflogs are local and expire (default 90 days). Force-pushing after rebase
+#   orphans the old commits. Git determines reachability by walking the object
+#   graph, it does NOT scan file contents for hashes, so recording a hash
+#   here does not prevent garbage collection. What this file gives you is a
+#   human-readable audit trail: you know what the hash was, so you can use it
+#   locally within the reflog window (~90 days) or on GitHub while the dangling
+#   object still exists. For permanent recovery, create a tag or branch instead.
+#
+# HOW TO ADD AN ENTRY:
+#   After every rebase of main onto a new upstream/master, append a new entry
+#   at the END of this file. Copy the template below and fill in the fields.
+#   The rebase CI workflow does this automatically for [auto] fields.
+#
+# FIELD FORMAT:
+#   date                       → "YYYY-MM-DD" (quoted, ISO 8601)
+#   previous_base              → full 40-char SHA-1, or null if first entry
+#   new_base                   → full 40-char SHA-1
+#   pre_rebase_head            → full 40-char SHA-1, or null if first entry
+#   post_rebase_head           → full 40-char SHA-1
+#   upstream_commits_integrated → integer
+#   conflicts                  → list of filenames, or []
+#   dropped_patches            → list of {file, reason} objects, or []
+#   notes                      → free-form string, or null
+#
+# TEMPLATE (copy this for new entries):
+# ──────────────────────────────────────
+# - date: "YYYY-MM-DD"
+#   previous_base: <old upstream.base_commit from PATCH.yaml>
+#   new_base: <new upstream/master tip we rebased onto>
+#   pre_rebase_head: <git rev-parse main, BEFORE running git rebase>
+#   post_rebase_head: <git rev-parse main, AFTER rebase completes>
+#   upstream_commits_integrated: <git rev-list --count previous_base..new_base>
+#   conflicts: []
+#   dropped_patches: []
+#   notes: null
+# ──────────────────────────────────────
+#
+# RECOVERY COMMANDS (using entries from this log):
+#   These work while the orphaned objects still exist locally (within ~90 days)
+#   or on GitHub (while dangling objects haven't been GC'd):
+#
+#   git log <pre_rebase_head>                    → view old branch state
+#   git diff <pre_rebase_head>..main             → verify nothing was lost
+#   git cherry-pick <commit from old history>    → recover a specific change
+#   git checkout -b recovery <pre_rebase_head>   → full recovery branch
+#   git range-diff <prev_post>..<pre> <new_base>..<post>  → compare patch series across rebases
+#
+#   For permanent recovery: create a tag or archive refs pointing to pre_rebase_head before rebasing.
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# Rebase History (oldest first, append new entries at the end)
+# ═══════════════════════════════════════════════════════════════════════════════
+
+- date: "2026-03-29"
+  previous_base: null
+  new_base: ed2ba2074812482d185dc2aa4c83bf804c35912a
+  pre_rebase_head: null
+  post_rebase_head: ed2ba2074812482d185dc2aa4c83bf804c35912a
+  upstream_commits_integrated: 0
+  conflicts: []
+  dropped_patches: []
+  notes: Downstream created (main branched from upstream/master)

@@ -1,0 +1,179 @@
+# Soduto Android: Patch (Downstream) Manifest
+#
+# Single source of truth for this repository's CURRENT state relative to upstream.
+# Full rebase history lives in SYNC_LOG.yaml, this file only tracks the present.
+#
+# Fields marked [auto] are updated by CI during sync/rebase workflows.
+# All other fields are human-maintained.
+#
+# HOW TO USE DURING A REBASE CONFLICT:
+#   1. Look up the conflicting file in the `patches` section below
+#   2. Read its `intent` to understand WHY we changed it
+#   3. Read its `resolution_strategy` for HOW to resolve
+#   4. After resolving, update `conflicts` in SYNC_LOG.yaml
+#
+# FIELD FORMAT REFERENCE:
+#   Dates    → "YYYY-MM-DD" (quoted, ISO 8601 date only)
+#   Commits  → full 40-character SHA-1 hex string
+#   Nulls    → use `null` (not "" or ~) for empty optional fields
+#   Lists    → use `[]` for empty lists, never omit the key
+
+# ─── Upstream Tracking ───────────────────────────────────────────────────────
+
+upstream:
+  # HTTPS URL of the canonical upstream repository.
+  repository: https://invent.kde.org/network/kdeconnect-android.git
+
+  # The upstream branch we track and rebase onto.
+  branch: master
+
+  # [auto] The upstream commit at the tip of upstream/master that our downstream
+  # patches are currently rebased onto. This is NOT a downstream commit, it's
+  # the exact commit from upstream's history. After a rebase, this becomes the
+  # new upstream/master tip. Use this to answer: "how far behind upstream are we?"
+  #
+  #   git log <base_commit>..upstream/master --oneline   → pending upstream commits
+  #   git rev-list --count <base_commit>..upstream/master → count of pending commits
+  base_commit: ed2ba2074812482d185dc2aa4c83bf804c35912a
+
+  # [auto] Date when upstream/* refs on GitHub were last synced from KDE Invent
+  # by the sync-upstream workflow. This does NOT mean main was rebased, only
+  # that the upstream/* mirror branches/tags are up to date as of this date.
+  last_sync: "2026-03-29"
+
+# ─── Downstream Identity ─────────────────────────────────────────────────────
+
+downstream:
+  name: Soduto
+  application_id: com.thenoton.soduto
+  website: https://soduto.thenoton.com
+  repository: https://github.com/sannidhyaroy/soduto-android.git
+
+# ─── Last Rebase ─────────────────────────────────────────────────────────────
+# Snapshot of the most recent rebase of main onto upstream/master.
+# Overwritten each rebase. See SYNC_LOG.yaml for the full history.
+#
+# The pre_rebase_head is the most important field here. It points to the
+# orphaned commit that was main's HEAD before the rebase + force-push.
+# Recording it here is a human-readable audit trail, it does NOT keep the
+# object alive in git (reachability is determined by the object graph, not
+# file contents). The orphaned commit survives locally for ~90 days (reflog)
+# and on GitHub until GC. Use these hashes within that window:
+#
+#   git log <pre_rebase_head>                → inspect old branch state
+#   git diff <pre_rebase_head>..main         → verify nothing was lost in rebase
+#   git cherry-pick <hash>                   → recover a specific old commit
+#   git checkout -b recovery <pre_rebase_head> → full recovery branch
+#
+# For permanent recovery: create a tag or archive ref pointing to pre_rebase_head BEFORE rebasing.
+
+last_rebase:
+  # Date the rebase was performed.
+  date: "2026-03-29"
+
+  # [auto] The value of upstream.base_commit BEFORE this rebase.
+  # null on initial downstream creation (there was no previous base).
+  previous_base: null
+
+  # [auto] The upstream commit we rebased onto (becomes the new upstream.base_commit).
+  new_base: ed2ba2074812482d185dc2aa4c83bf804c35912a
+
+  # [auto] The commit hash that was HEAD of main before the rebase.
+  # This commit becomes orphaned after force-push. Recorded here and in
+  # SYNC_LOG.yaml as a human-readable audit trail.
+  # null on initial downstream creation (main was created fresh, nothing to orphan).
+  pre_rebase_head: null
+
+  # [auto] The commit hash that is HEAD of main after the rebase.
+  # Cross-reference with `git reflog main` to verify consistency.
+  post_rebase_head: ed2ba2074812482d185dc2aa4c83bf804c35912a
+
+  # [auto] Number of new upstream commits integrated in this rebase.
+  #   git rev-list --count <previous_base>..<new_base>
+  upstream_commits_integrated: 0
+
+  # Files that had merge conflicts during this rebase. Empty list if clean.
+  # Format: list of filenames, e.g. [build.gradle.kts, src/SomeFile.kt]
+  conflicts: []
+
+  # Downstream patches intentionally removed during this rebase because
+  # upstream caught up or the change is no longer needed.
+  # Format: list of objects with `file` and `reason` keys.
+  # Example:
+  #   - file: src/.../ClipboardPlugin.kt
+  #     reason: Upstream merged equivalent fix in commit abc123
+  dropped_patches: []
+
+  # Free-form notes about this rebase. Anything notable like large upstream
+  # refactors, tricky conflict resolutions, things to watch in the next sync.
+  notes: Downstream created (main branched from upstream/master)
+
+# ─── Patch Manifest ──────────────────────────────────────────────────────────
+# Every file in our downstream that differs from upstream.
+#
+# Split into `modified` (upstream files we edited) and `added` (new files
+# that don't exist upstream). Modified files are where rebase conflicts happen;
+# added files never conflict.
+#
+# The file lists can be verified/regenerated from git:
+#   git diff --name-status <base_commit>..main
+#     M = modified, A = added
+#
+# REQUIRED FIELDS (every entry must have these):
+#   file   → path relative to repo root
+#   intent → one-line explanation of WHY this change exists (not what it does)
+#
+# OPTIONAL FIELDS (for modified files, fill these to make rebases painless):
+#   conflict_prone       → true/false → does upstream frequently touch this file?
+#   resolution_strategy  → how to resolve conflicts when they arise
+#   upstream_issue       → URL to upstream bug/MR if they might fix this themselves
+#   drop_when            → condition under which this patch becomes unnecessary
+#                          and should be removed (e.g. "upstream merges MR !1234")
+
+patches:
+  modified:
+    - file: COPYING
+      intent: Re-licensed to GPL-3.0 for Soduto downstream
+      conflict_prone: false
+      resolution_strategy: >-
+        Keep our GPL-3.0 text for the file content itself. We can do this because
+        upstream's SPDX expression is "GPL-2.0-only OR GPL-3.0-only OR
+        LicenseRef-KDE-Accepted-GPL", and we exercised the GPL-3.0 option.
+        Upstream code arrives under the same multi-license and we receive them as
+        GPL-3.0.
+        HOWEVER, if upstream's COPYING itself changes during a rebase, do NOT
+        auto-resolve. Stop and assess:
+        - If they expanded options or became more permissive: keep ours, no issue.
+        - If they dropped the GPL-3.0 option or became more restrictive (GPL-2.0-only,
+          SSPL, Commons Clause, etc.): this is a legal incompatibility. New commits
+          after that point CANNOT be received as GPL-3.0. The existing codebase up to
+          the last compatible commit is still valid under GPL-3.0. Do not proceed with
+          the rebase until the licensing situation is evaluated.
+      upstream_issue: null
+      drop_when: null
+
+    - file: README.md
+      intent: Complete rewrite for Soduto branding, documentation, and GPG release verification
+      conflict_prone: false
+      resolution_strategy: >-
+        Keep ours. Our README is entirely Soduto-specific (branding, install
+        links, signing key, limitations). Upstream changes to README.md are
+        irrelevant. Always take our version.
+      upstream_issue: null
+      drop_when: null
+
+  added:
+    - file: .github/workflows/sync-upstream.yml
+      intent: Automated upstream ref syncing via GitHub Actions
+
+    - file: .github/workflows/notify-upstream.yml
+      intent: Notifies via GitHub issue when upstream has new commits to integrate
+
+    - file: PATCH.yaml
+      intent: Patch (Downstream) manifest (current state, patch inventory, rebase snapshot)
+
+    - file: SYNC_LOG.yaml
+      intent: Full rebase history with orphaned commit hashes for recovery
+
+    - file: CLAUDE.md
+      intent: AI assistant context for working with this codebase
