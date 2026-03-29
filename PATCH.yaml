@@ -225,6 +225,161 @@ patches:
       upstream_issue: null
       drop_when: null
 
+    - file: src/main/AndroidManifest.xml
+      intent: Change app label to @string/app_name and SendFileActivity label to @string/app_name
+      conflict_prone: true
+      resolution_strategy: >-
+        Upstream frequently touches the manifest. Our changes are two label attributes
+        on <application> and SendFileActivity. On conflict, keep our label values and
+        accept upstream's other manifest changes.
+      upstream_issue: null
+      drop_when: null
+
+    - file: src/main/res/values/strings.xml
+      intent: Add app_name="Soduto" (untranslatable), override kde_connect and all user-visible KDE Connect references to Soduto
+      conflict_prone: true
+      resolution_strategy: >-
+        Upstream adds strings here frequently. Accept new upstream strings, but keep
+        our overridden values for kde_connect and app_name. Never accept upstream
+        kde_connect value ("KDE Connect") — always keep ours ("Soduto").
+      upstream_issue: null
+      drop_when: null
+
+    - file: src/debug/res/values/strings.xml
+      intent: Override kde_connect to "Debug Soduto" for debug builds
+      conflict_prone: false
+      resolution_strategy: Keep ours.
+      upstream_issue: null
+      drop_when: null
+
+    - file: src/main/java/org/kde/kdeconnect/backends/bluetooth/BluetoothLinkProvider.kt
+      intent: Change Bluetooth RFCOMM service record display name from "KDE Connect" to "Soduto"
+      conflict_prone: false
+      resolution_strategy: Keep ours. Display name only — UUID is unchanged so connectivity is unaffected.
+      upstream_issue: null
+      drop_when: null
+
+    - file: src/main/java/org/kde/kdeconnect/ui/SettingsFragment.kt
+      intent: Change log export filename and file header from "KDE Connect" to "Soduto"
+      conflict_prone: false
+      resolution_strategy: Keep ours. Two-line change — if upstream modifies this file, reapply our strings.
+      upstream_issue: null
+      drop_when: null
+
+    - file: settings.gradle.kts
+      intent: Change rootProject.name to "soduto-android" so APK filename reflects the app name
+      conflict_prone: false
+      resolution_strategy: Keep ours. One-line change.
+      upstream_issue: null
+      drop_when: null
+
+    - file: src/main/java/org/kde/kdeconnect/KdeConnect.kt
+      intent: Change all log tags and HandroidLoggerAdapter.APP_NAME from "KDEConnect" to "Soduto"
+      conflict_prone: false
+      resolution_strategy: Keep ours. If upstream modifies this file, reapply our tag strings.
+      upstream_issue: null
+      drop_when: null
+
+    - file: src/main/java/org/kde/kdeconnect/helpers/TrustedDevices.kt
+      intent: Change log tag from "TrustedDevices" to "Soduto/TrustedDevices"
+      conflict_prone: false
+      resolution_strategy: Keep ours. One-line change.
+      upstream_issue: null
+      drop_when: null
+
+    - file: src/main/java/org/kde/kdeconnect/ui/about/ApplicationAboutData.kt
+      intent: Add Sannidhya Roy as second author entry; update Albert's task string
+      conflict_prone: false
+      resolution_strategy: Keep ours. If upstream adds more authors, preserve our Sannidhya Roy entry after Albert.
+      upstream_issue: null
+      drop_when: null
+
+    - file: src/main/java/org/kde/kdeconnect/ui/about/EasterEggActivity.kt
+      intent: Change Easter Egg background color from KDE blue to Soduto green; add white color filter on logo
+      conflict_prone: false
+      resolution_strategy: Keep ours. Always take our version on conflict.
+      upstream_issue: null
+      drop_when: null
+
+    - file: src/main/res/layout/activity_easter_egg.xml
+      intent: Change Easter Egg background to Soduto green and icon to ic_launcher_foreground
+      conflict_prone: false
+      resolution_strategy: Keep ours. Always take our version on conflict.
+      upstream_issue: null
+      drop_when: null
+
+    - file: src/main/res/layout/fragment_about.xml
+      intent: Use ShapeableImageView with rounded corners for About page icon; fix vertical alignment and icon/text spacing
+      conflict_prone: false
+      resolution_strategy: Keep ours. If upstream changes this layout, reapply our ShapeableImageView changes.
+      upstream_issue: null
+      drop_when: null
+
+    - file: src/main/res/values/styles.xml
+      intent: Add ShapeAppearanceOverlay.AppIcon style (11dp rounded corners) for About page icon
+      conflict_prone: false
+      resolution_strategy: Keep ours. If upstream adds styles, incorporate them and keep our overlay style.
+      upstream_issue: null
+      drop_when: null
+
+    # 6 retained locale files with Soduto branding translations
+    - file: src/main/res/values-de/strings.xml
+      intent: Update all Soduto-branded strings for German locale
+      conflict_prone: false
+      resolution_strategy: Accept upstream additions; keep our overridden Soduto string values.
+      upstream_issue: null
+      drop_when: null
+
+    - file: src/main/res/values-fr/strings.xml
+      intent: Update all Soduto-branded strings for French locale
+      conflict_prone: false
+      resolution_strategy: Accept upstream additions; keep our overridden Soduto string values.
+      upstream_issue: null
+      drop_when: null
+
+    - file: src/main/res/values-ja/strings.xml
+      intent: Update all Soduto-branded strings for Japanese locale
+      conflict_prone: false
+      resolution_strategy: Accept upstream additions; keep our overridden Soduto string values.
+      upstream_issue: null
+      drop_when: null
+
+    - file: src/main/res/values-ko/strings.xml
+      intent: Update all Soduto-branded strings for Korean locale
+      conflict_prone: false
+      resolution_strategy: Accept upstream additions; keep our overridden Soduto string values.
+      upstream_issue: null
+      drop_when: null
+
+    - file: src/main/res/values-ru/strings.xml
+      intent: Update all Soduto-branded strings for Russian locale
+      conflict_prone: false
+      resolution_strategy: Accept upstream additions; keep our overridden Soduto string values.
+      upstream_issue: null
+      drop_when: null
+
+    - file: src/main/res/values-zh-rCN/strings.xml
+      intent: Update all Soduto-branded strings for Simplified Chinese locale
+      conflict_prone: false
+      resolution_strategy: Accept upstream additions; keep our overridden Soduto string values.
+      upstream_issue: null
+      drop_when: null
+
+    # 6 fastlane store listing locales with Soduto content
+    - file: fastlane/metadata/android/en-US/
+      intent: Rewrite F-Droid/store listing title, short and full descriptions for Soduto
+      conflict_prone: false
+      resolution_strategy: Keep ours. Complete Soduto-specific rewrite.
+      upstream_issue: null
+      drop_when: null
+
+    - file: fastlane/metadata/android/{de-DE,fr-FR,ja-JP,ko-KR,ru-RU,zh_CN}/
+      intent: Translated Soduto store listing for the 6 supported languages
+      conflict_prone: false
+      resolution_strategy: Keep ours. Our translations of our own listing copy.
+      upstream_issue: null
+      drop_when: null
+
     - file: icon.svg
       intent: Replace KDE Connect icon source with Soduto artwork
       conflict_prone: false
@@ -421,6 +576,29 @@ patches:
       resolution_strategy: >-
         File no longer exists in our tree. If upstream adds it, delete it again.
         The vector in drawable-anydpi-v24/ handles all modern devices.
+
+    # 41 upstream locale string files removed; Soduto maintains only 6 languages
+    - file: "src/main/res/values-{ar,ast,az,bg,bs,ca,cs,da,el,en-rGB,eo,es,et,eu,fi,ga,gl,hu,ia,id,in,is,it,iw,ka,lt,nl,nn,pl,pt,pt-rBR,ro,sk,sl,sr,sv,ta,tg,tr,uk,zh-rTW}/strings.xml"
+      intent: 41 upstream locale folders removed — Soduto cannot maintain this many translations
+      conflict_prone: false
+      resolution_strategy: >-
+        These files no longer exist in our tree. If upstream modifies them,
+        ignore. We only maintain de, fr, ja, ko, ru, zh-rCN.
+
+    - file: po/
+      intent: Removed entire po/ directory — KDE Weblate/Lokalize sources not used by Soduto's build or F-Droid pipeline
+      conflict_prone: false
+      resolution_strategy: >-
+        This directory no longer exists in our tree. If upstream adds new .po
+        files, delete them again on rebase.
+
+    # 19 upstream fastlane locale listing folders removed
+    - file: "fastlane/metadata/android/{ar,az-AZ,bg,ca,cs-CZ,en_GB,es-ES,eu-ES,fi-FI,ga,gl-ES,it-IT,iw-IL,ka-GE,nl-NL,no-NO,pl-PL,pt-PT,pt_BR,ro,sk,sl,sv-SE,tr-TR,uk,zh_TW}/"
+      intent: 26 upstream fastlane locale listing folders removed — kept only en-US + our 6 translated languages
+      conflict_prone: false
+      resolution_strategy: >-
+        These directories no longer exist in our tree. If upstream adds or
+        modifies listings for these locales, delete them again on rebase.
 
   added:
     - file: .github/workflows/sync-upstream.yml
