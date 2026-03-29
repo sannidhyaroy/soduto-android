@@ -1,6 +1,6 @@
 <div align="center">
-  <img src="icon.svg" alt="Soduto (Android) Logo"/>
-  <h1 style="font-weight: 700; font-size: 4em; margin: 0; padding-top: 0;">Soduto (Android)</h1>
+  <img src="AssetIcon.png" alt="Soduto (Android) Logo" width="200"/>
+  <h1 style="font-weight: 700; font-size: 4em; margin: 0; padding-top: 0;">Soduto</h1>
   <div style="margin-bottom: 1em">
   <a href="https://github.com/sannidhyaroy/soduto-android/blob/main/LICENSE"><img src="https://img.shields.io/github/license/sannidhyaroy/soduto-android.svg?color=B0BB88&style=flat-square" alt="GNU Licensed"></a>
   <a href="https://github.com/sannidhyaroy/soduto-android/issues"><img alt="GitHub issues" src="https://img.shields.io/github/issues/sannidhyaroy/soduto-android?color=B0BB88&style=flat-square"></a>
