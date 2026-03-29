@@ -225,6 +225,203 @@ patches:
       upstream_issue: null
       drop_when: null
 
+    - file: icon.svg
+      intent: Replace KDE Connect icon source with Soduto artwork
+      conflict_prone: false
+      resolution_strategy: Keep ours. This is a complete replacement. Always take our version.
+      upstream_issue: null
+      drop_when: null
+
+    - file: adaptive_icon.svg
+      intent: Replace KDE Connect adaptive icon source with Soduto artwork
+      conflict_prone: false
+      resolution_strategy: Keep ours. This is a complete replacement. Always take our version.
+      upstream_issue: null
+      drop_when: null
+
+    - file: src/main/res/drawable-v24/ic_launcher_background.xml
+      intent: Replace KDE Connect launcher background with Soduto green diagonal gradient
+      conflict_prone: false
+      resolution_strategy: Keep ours. Complete replacement of background color/gradient.
+      upstream_issue: null
+      drop_when: null
+
+    - file: src/main/res/values/colors.xml
+      intent: Update launcher_background color from KDE Connect blue to Soduto green
+      conflict_prone: false
+      resolution_strategy: Keep ours. If upstream adds new colors, incorporate them but keep our launcher_background value.
+      upstream_issue: null
+      drop_when: null
+
+    - file: src/main/res/drawable-hdpi/ic_notification.png
+      intent: Replace KDE Connect notification icon with Soduto icon
+      conflict_prone: false
+      resolution_strategy: Keep ours. Always take our version.
+      upstream_issue: null
+      drop_when: null
+
+    - file: src/main/res/drawable-mdpi/ic_notification.png
+      intent: Replace KDE Connect notification icon with Soduto icon
+      conflict_prone: false
+      resolution_strategy: Keep ours. Always take our version.
+      upstream_issue: null
+      drop_when: null
+
+    - file: src/main/res/drawable-xhdpi/ic_notification.png
+      intent: Replace KDE Connect notification icon with Soduto icon
+      conflict_prone: false
+      resolution_strategy: Keep ours. Always take our version.
+      upstream_issue: null
+      drop_when: null
+
+    - file: src/main/res/drawable-xxhdpi/ic_notification.png
+      intent: Replace KDE Connect notification icon with Soduto icon
+      conflict_prone: false
+      resolution_strategy: Keep ours. Always take our version.
+      upstream_issue: null
+      drop_when: null
+
+    - file: src/main/res/drawable-hdpi/icon.png
+      intent: Replace KDE Connect app icon with Soduto icon (About screen, share target)
+      conflict_prone: false
+      resolution_strategy: Keep ours. Always take our version.
+      upstream_issue: null
+      drop_when: null
+
+    - file: src/main/res/drawable-mdpi/icon.png
+      intent: Replace KDE Connect app icon with Soduto icon (About screen, share target)
+      conflict_prone: false
+      resolution_strategy: Keep ours. Always take our version.
+      upstream_issue: null
+      drop_when: null
+
+    - file: src/main/res/drawable-xhdpi/icon.png
+      intent: Replace KDE Connect app icon with Soduto icon (About screen, share target)
+      conflict_prone: false
+      resolution_strategy: Keep ours. Always take our version.
+      upstream_issue: null
+      drop_when: null
+
+    - file: src/main/res/drawable-xxhdpi/icon.png
+      intent: Replace KDE Connect app icon with Soduto icon (About screen, share target)
+      conflict_prone: false
+      resolution_strategy: Keep ours. Always take our version.
+      upstream_issue: null
+      drop_when: null
+
+    - file: src/main/res/mipmap-hdpi/ic_launcher.png
+      intent: Replace KDE Connect launcher icon with Soduto icon
+      conflict_prone: false
+      resolution_strategy: Keep ours. Always take our version.
+      upstream_issue: null
+      drop_when: null
+
+    - file: src/main/res/mipmap-hdpi/ic_launcher_round.png
+      intent: Replace KDE Connect launcher icon with Soduto icon
+      conflict_prone: false
+      resolution_strategy: Keep ours. Always take our version.
+      upstream_issue: null
+      drop_when: null
+
+    - file: src/main/res/mipmap-mdpi/ic_launcher.png
+      intent: Replace KDE Connect launcher icon with Soduto icon
+      conflict_prone: false
+      resolution_strategy: Keep ours. Always take our version.
+      upstream_issue: null
+      drop_when: null
+
+    - file: src/main/res/mipmap-mdpi/ic_launcher_round.png
+      intent: Replace KDE Connect launcher icon with Soduto icon
+      conflict_prone: false
+      resolution_strategy: Keep ours. Always take our version.
+      upstream_issue: null
+      drop_when: null
+
+    - file: src/main/res/mipmap-xhdpi/ic_launcher.png
+      intent: Replace KDE Connect launcher icon with Soduto icon
+      conflict_prone: false
+      resolution_strategy: Keep ours. Always take our version.
+      upstream_issue: null
+      drop_when: null
+
+    - file: src/main/res/mipmap-xhdpi/ic_launcher_round.png
+      intent: Replace KDE Connect launcher icon with Soduto icon
+      conflict_prone: false
+      resolution_strategy: Keep ours. Always take our version.
+      upstream_issue: null
+      drop_when: null
+
+    - file: src/main/res/mipmap-xhdpi/ic_launcher_banner.png
+      intent: Replace KDE Connect TV banner icon with Soduto icon
+      conflict_prone: false
+      resolution_strategy: Keep ours. Always take our version.
+      upstream_issue: null
+      drop_when: null
+
+    - file: src/main/res/mipmap-xxhdpi/ic_launcher.png
+      intent: Replace KDE Connect launcher icon with Soduto icon
+      conflict_prone: false
+      resolution_strategy: Keep ours. Always take our version.
+      upstream_issue: null
+      drop_when: null
+
+    - file: src/main/res/mipmap-xxhdpi/ic_launcher_round.png
+      intent: Replace KDE Connect launcher icon with Soduto icon
+      conflict_prone: false
+      resolution_strategy: Keep ours. Always take our version.
+      upstream_issue: null
+      drop_when: null
+
+    - file: src/main/res/mipmap-xxxhdpi/ic_launcher.png
+      intent: Replace KDE Connect launcher icon with Soduto icon
+      conflict_prone: false
+      resolution_strategy: Keep ours. Always take our version.
+      upstream_issue: null
+      drop_when: null
+
+    - file: src/main/res/mipmap-xxxhdpi/ic_launcher_round.png
+      intent: Replace KDE Connect launcher icon with Soduto icon
+      conflict_prone: false
+      resolution_strategy: Keep ours. Always take our version.
+      upstream_issue: null
+      drop_when: null
+
+  deleted:
+    - file: src/main/res/drawable-v24/ic_launcher_foreground.xml
+      intent: Moved to drawable/ (no v24 qualifier needed); replaced with Soduto foreground
+      conflict_prone: false
+      resolution_strategy: >-
+        File no longer exists in our tree. If upstream modifies it, ignore. Our
+        replacement lives at drawable/ic_launcher_foreground.xml.
+
+    - file: src/main/res/drawable-v24/ic_launcher_monochrome.xml
+      intent: Moved to drawable/ (no v24 qualifier needed); replaced with Soduto monochrome
+      conflict_prone: false
+      resolution_strategy: >-
+        File no longer exists in our tree. If upstream modifies it, ignore. Our
+        replacement lives at drawable/ic_launcher_monochrome.xml.
+
+    - file: src/main/res/drawable-v24/ic_launcher_banner_foreground.xml
+      intent: Moved to drawable/; replaced with Soduto banner foreground
+      conflict_prone: false
+      resolution_strategy: >-
+        File no longer exists in our tree. If upstream modifies it, ignore. Our
+        replacement lives at drawable/ic_launcher_banner_foreground.xml.
+
+    - file: src/main/res/drawable-v24/ic_launcher_banner_background.xml
+      intent: Moved to drawable/; replaced with Soduto banner background
+      conflict_prone: false
+      resolution_strategy: >-
+        File no longer exists in our tree. If upstream modifies it, ignore. Our
+        replacement lives at drawable/ic_launcher_banner_background.xml.
+
+    - file: src/main/res/drawable-xxxhdpi/ic_notification.png
+      intent: Removed — xxxhdpi density not needed; vector covers API 24+ devices
+      conflict_prone: false
+      resolution_strategy: >-
+        File no longer exists in our tree. If upstream adds it, delete it again.
+        The vector in drawable-anydpi-v24/ handles all modern devices.
+
   added:
     - file: .github/workflows/sync-upstream.yml
       intent: Automated upstream ref syncing via GitHub Actions
@@ -240,3 +437,24 @@ patches:
 
     - file: CLAUDE.md
       intent: AI assistant context for working with this codebase
+
+    - file: AssetIcon.png
+      intent: Soduto icon asset used as GitHub README header logo
+
+    - file: src/main/ic_launcher-playstore.png
+      intent: 512×512 Play Store listing icon generated by Android Studio Image Asset
+
+    - file: src/main/res/drawable/ic_launcher_foreground.xml
+      intent: Soduto adaptive icon foreground (diagonal lines artwork)
+
+    - file: src/main/res/drawable/ic_launcher_monochrome.xml
+      intent: Soduto monochrome icon layer for themed icons (Android 13+)
+
+    - file: src/main/res/drawable/ic_launcher_banner_foreground.xml
+      intent: Soduto Android TV banner foreground
+
+    - file: src/main/res/drawable/ic_launcher_banner_background.xml
+      intent: Soduto Android TV banner background with green gradient
+
+    - file: src/main/res/drawable-anydpi-v24/ic_notification.xml
+      intent: Soduto notification icon as vector drawable (API 24+)
