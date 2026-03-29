@@ -18,6 +18,7 @@ import org.kde.kdeconnect.Device
 import org.kde.kdeconnect.KdeConnect
 import org.kde.kdeconnect.ui.list.DeviceItem
 import org.kde.kdeconnect.ui.list.ListAdapter
+import org.kde.kdeconnect_tp.BuildConfig
 import org.kde.kdeconnect_tp.databinding.WidgetRemoteCommandPluginDialogBinding
 
 class RunCommandWidgetConfigActivity : AppCompatActivity() {
@@ -61,7 +62,7 @@ class RunCommandWidgetConfigActivity : AppCompatActivity() {
     }
 }
 
-private const val PREFS_NAME = "org.kde.kdeconnect_tp.WidgetProvider"
+private val PREFS_NAME = BuildConfig.APPLICATION_ID + ".WidgetProvider"
 private const val PREF_PREFIX_KEY = "appwidget_"
 
 internal fun saveWidgetDeviceIdPref(context: Context, appWidgetId: Int, deviceName: String) {

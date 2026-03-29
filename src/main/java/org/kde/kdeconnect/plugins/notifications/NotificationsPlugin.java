@@ -219,8 +219,10 @@ public class NotificationsPlugin extends Plugin implements NotificationReceiver.
             }
         }
 
-        if ("org.kde.kdeconnect_tp".equals(packageName) || "org.kde.kdeconnect_tp.debug".equals(packageName)) {
-            // Don't send our own notifications
+        String ownBasePackage = context.getPackageName().replaceFirst("\\.debug$", "");
+        String notifBasePackage = packageName.replaceFirst("\\.debug$", "");
+        if (notifBasePackage.equals(ownBasePackage)) {
+            // Don't forward our own notifications
             return;
         }
 

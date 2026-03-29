@@ -33,6 +33,7 @@ import org.kde.kdeconnect.plugins.notifications.NotificationReceiver
 import org.kde.kdeconnect.plugins.systemvolume.SystemVolumePlugin
 import org.kde.kdeconnect.plugins.systemvolume.SystemVolumeProvider
 import org.kde.kdeconnect.plugins.systemvolume.SystemVolumeProvider.Companion.currentProvider
+import org.kde.kdeconnect_tp.BuildConfig
 import org.kde.kdeconnect.plugins.systemvolume.SystemVolumeProvider.ProviderStateListener
 import org.kde.kdeconnect_tp.R
 
@@ -526,7 +527,7 @@ class MprisMediaSession : OnSharedPreferenceChangeListener, NotificationReceiver
 
         private const val MPRIS_MEDIA_NOTIFICATION_ID =
             0x91b70463.toInt() // echo MprisNotification | md5sum | head -c 8
-        private const val MPRIS_MEDIA_SESSION_TAG = "org.kde.kdeconnect_tp.media_session"
+        private val MPRIS_MEDIA_SESSION_TAG = BuildConfig.APPLICATION_ID + ".media_session"
 
         private const val SPOTIFY_PACKAGE_NAME = "com.spotify.music"
 
