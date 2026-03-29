@@ -1,6 +1,5 @@
 <?xml version='1.0' encoding='utf-8'?>
 <resources>
-  <string name="kde_connect">KDEConnect</string>
   <string name="manifest_label_share">Envoyer vers un périphérique</string>
   <string name="foreground_notification_no_devices">Connecté à aucun périphérique</string>
   <string name="foreground_notification_devices">Connecté à : %s</string>
@@ -48,11 +47,11 @@
   <string name="open_settings">Accéder aux paramètres</string>
   <string name="no_permissions">Vous devez accorder la permission d\'accéder aux notifications</string>
   <string name="no_permission_mprisreceiver">Pour pouvoir contrôler vos lecteurs multimédia, veuillez permettre l\'accès aux notifications</string>
-  <string name="no_permissions_remotekeyboard">Vous devez activer le Clavier à distance KDEConnect pour recevoir les appuis sur les touches</string>
+  <string name="no_permissions_remotekeyboard">Vous devez activer le Clavier à distance Soduto pour recevoir les appuis sur les touches</string>
   <string name="send_ping">Envoyer un « Ping »</string>
   <string name="open_mpris_controls">Contrôles multimédia</string>
   <string name="remotekeyboard_editing_only_title">Gérer les appuis de touches à distance uniquement lors de l\'édition</string>
-  <string name="remotekeyboard_not_connected">Aucune connexion active d\'un clavier à distance disponible, établissez-en une dans « KDEConnect ».</string>
+  <string name="remotekeyboard_not_connected">Aucune connexion active d\'un clavier à distance disponible, établissez-en une dans Soduto (ou d\'autres clients KDE Connect).</string>
   <string name="remotekeyboard_connected">La connexion au clavier sans fil est active</string>
   <string name="remotekeyboard_multiple_connections">Plusieurs connexions à des claviers sans fil sont disponibles, sélectionnez le périphérique à configurer</string>
   <string name="open_mousepad">Contrôle distant</string>
@@ -201,7 +200,7 @@
   </string-array>
   <string name="mpris_notifications_explanation">Les permissions pour les notifications sont nécessaires pour afficher des média distants dans le panneau des notifications.</string>
   <string name="mpris_notification_settings_title">Afficher la notification de contrôle du lecteur multimédia</string>
-  <string name="mpris_notification_settings_summary">Vous permet de contrôler vos lecteurs multimédia sans ouvrir KDEConnect.</string>
+  <string name="mpris_notification_settings_summary">Vous permet de contrôler vos lecteurs multimédia sans ouvrir Soduto.</string>
   <string name="share_to">Partager vers…</string>
   <string name="unreachable_device_dynamic_shortcut">%s (✕)</string>
   <string name="unreachable_device_url_share_text">Les URL partagées vers un appareil inaccessible lui seront transmises une fois qu\'il re-deviendra accessible.\n\n</string>
@@ -243,7 +242,7 @@
   <string name="sftp_action_mode_menu_delete">Supprimer</string>
   <string name="sftp_no_storage_locations_configured">Aucun emplacement stockage n\'est configuré</string>
   <string name="sftp_saf_permission_explanation">Vous devez configurer des emplacements de stockage pour accéder aux fichiers à distance</string>
-  <string name="sftp_manage_storage_permission_explanation">Pour permettre l\'accès à distance aux fichiers sur ce périphérique, vous devez autoriser KDEConnect à gérer l\'enregistrement.</string>
+  <string name="sftp_manage_storage_permission_explanation">Pour permettre l\'accès à distance aux fichiers sur ce périphérique, vous devez autoriser Soduto à gérer l\'enregistrement.</string>
   <string name="sftp_missing_permission_error">Autorisations manquantes : accès au système de fichiers</string>
   <string name="no_players_connected">Aucun lecteur trouvé</string>
   <string name="send_files">Envoyer des fichiers</string>
@@ -262,8 +261,8 @@
   </string-array>
   <string name="block_notification_contents">Bloquer les contenus de notifications</string>
   <string name="block_notification_images">Bloquer les images de notifications</string>
-  <string name="pairing_title">Périphériques KDEConnect</string>
-  <string name="pairing_description">Les autres périphériques utilisant KDEConnect dans votre réseau apparaissent ici.</string>
+  <string name="pairing_title">Périphériques</string>
+  <string name="pairing_description">Les périphériques utilisant Soduto (ou d\'autres clients KDE Connect) dans votre réseau apparaissent ici.</string>
   <string name="device_rename_title">Renommer le périphérique</string>
   <string name="device_rename_confirm">Renommer</string>
   <string name="refresh">Mettre à jour</string>
@@ -274,7 +273,7 @@
   <string name="pref_plugin_telepathy">Envoyer un SMS</string>
   <string name="pref_plugin_telepathy_desc">Envoyer des SMS depuis votre bureau</string>
   <string name="pref_plugin_telepathy_mms">Envoyer un « MMS »</string>
-  <string name="pref_plugin_telepathy_mms_desc">Pour pouvoir envoyer des « MMS » à partir de « KDEConnect », vous avez besoin de définir « KDEConnect » comme votre application par défaut pour les « SMS ».</string>
+  <string name="pref_plugin_telepathy_mms_desc">Pour pouvoir envoyer des « MMS » à partir de Soduto, vous avez besoin de définir Soduto comme votre application par défaut pour les « SMS ».</string>
   <string name="findmyphone_title">Trouver mon téléphone</string>
   <string name="findmyphone_title_tablet">Trouver ma tablette</string>
   <string name="findmyphone_title_tv">Trouver ma télévision</string>
@@ -293,7 +292,7 @@
   <string name="telephony_permission_explanation">Pour voir les appels depuis votre ordinateur, veuillez permettre l\'accès au journal des appels et à l\'état du téléphone</string>
   <string name="telephony_optional_permission_explanation">Pour voir le nom du contact au lieu du numéro de téléphone, veuillez permettre l\'accès aux contacts du téléphone</string>
   <string name="contacts_permission_explanation">Pour partager votre carnet de contacts avec votre ordinateur, veuillez permettre l\'accès aux contacts du téléphone</string>
-  <string name="contacts_per_device_confirmation">Vos contacts téléphoniques seront copiés sur ce périphérique. Ainsi, ils pourront être utilisés par l\'application « SMS » de KDEConnect et d\'autres applications.</string>
+  <string name="contacts_per_device_confirmation">Vos contacts téléphoniques seront copiés sur ce périphérique. Ainsi, ils pourront être utilisés par l\'application SMS de Soduto (ou d\'autres clients KDE Connect) et d\'autres applications.</string>
   <string name="select_ringtone">Sélectionnez une sonnerie</string>
   <string name="telephony_pref_blocked_title">Numéros bloqués</string>
   <string name="telephony_pref_blocked_dialog_desc">Ne pas afficher les appels et les SMS provenant de ces numéros. Veuillez renseigner un numéro par ligne</string>
@@ -304,7 +303,7 @@
   <string name="presenter_lock_tip">Vous pouvez verrouiller votre appareil et utiliser les touches de volume pour passer d\'une diapositive à l\'autre</string>
   <string name="add_command">Ajouter une commande</string>
   <string name="addcommand_explanation">Aucune commande enregistrée</string>
-  <string name="addcommand_explanation2">Vous pouvez ajouter de nouvelles commandes dans la configuration système de KDEConnect</string>
+  <string name="addcommand_explanation2">Vous pouvez ajouter de nouvelles commandes dans Soduto (macOS) dans les Préférences (ou dans les Paramètres d\'autres clients KDE Connect)</string>
   <string name="add_command_description">Vous pouvez ajouter des commandes sur votre ordinateur</string>
   <string name="pref_plugin_mprisreceiver">Contrôle du lecteur multimédia</string>
   <string name="pref_plugin_mprisreceiver_desc">Contrôlez les lecteurs multimédia de votre téléphone depuis un autre appareil</string>
@@ -337,7 +336,7 @@
   <string name="devices">Périphériques</string>
   <string name="settings_rename">Nom du périphérique</string>
   <string name="settings_dark_mode">Thème sombre</string>
-  <string name="settings_export_logs">Exporter les journaux de KDEConnect</string>
+  <string name="settings_export_logs">Exporter les journaux Soduto</string>
   <string name="settings_export_logs_text">Générez un fichier avec des informations d\'exécution pouvant aider à résoudre les problèmes.</string>
   <string name="settings_more_settings_title">Plus de paramètres</string>
   <string name="settings_more_settings_text">Les paramètres par appareil sont disponibles dans la rubrique « Paramètres des modules externes » sur l\'appareil.</string>
@@ -352,7 +351,7 @@
   <string name="notification_channel_receivenotification">Notifications provenant d\'autres périphériques</string>
   <string name="findmyphone_preference_title_flashlight">Faire clignoter le flash</string>
   <string name="no_app_for_opening">Aucune application adaptée trouvée pour ouvrir ce fichier.</string>
-  <string name="remote_keyboard_service">Clavier à distance KDEConnect</string>
+  <string name="remote_keyboard_service">Clavier à distance Soduto</string>
   <string name="presenter_pointer">Pointeur</string>
   <string name="trusted_networks">Réseaux de confiance</string>
   <string name="trusted_networks_desc">Restreindre la découverte automatique aux réseaux connus</string>
@@ -360,8 +359,8 @@
   <string name="empty_trusted_networks_list_text">Vous n\'avez pas encore ajouté de réseau de confiance</string>
   <string name="allow_all_networks_text">Tout autoriser</string>
   <string name="location_permission_needed_title">Permissions requises</string>
-  <string name="bluetooth_permission_needed_desc">KDEConnect a besoin d\'autorisations pour se connecter aux périphériques proches afin que les périphériques couplés à l\'aide de Bluetooth soient disponibles dans KDEConnect.</string>
-  <string name="location_permission_needed_desc">KDEConnect a besoin de la permission d\'accéder à la localisation en arrière-plan pour connaître le réseau Wifi sur lequel vous êtes connecté, même si l\'application est en arrière-plan. En effet, le nom des réseaux Wifi autour de vous pourrait être utilisé pour trouver votre emplacement, même si ce n\'est pas ce que KDEConnect fait.</string>
+  <string name="bluetooth_permission_needed_desc">Soduto a besoin d\'autorisations pour se connecter aux périphériques proches afin que les périphériques couplés à l\'aide de Bluetooth soient disponibles dans Soduto.</string>
+  <string name="location_permission_needed_desc">Soduto a besoin de la permission d\'accéder à la localisation en arrière-plan pour connaître le réseau Wifi sur lequel vous êtes connecté, même si l\'application est en arrière-plan. En effet, le nom des réseaux Wifi autour de vous pourrait être utilisé pour trouver votre emplacement, même si ce n\'est pas ce que Soduto fait.</string>
   <string name="clipboard_android_x_incompat">Android 10 a supprimé l\'accès des applications au presse-papier. Ce module externe sera désactivé.</string>
   <string name="mpris_open_url">Continuer la lecture ici</string>
   <string name="cant_open_url">Impossible d\'ouvrir l\'URL pour continuer la lecture</string>
@@ -403,7 +402,7 @@
     <item>Sombre</item>
   </string-array>
   <string name="report_bug">Signaler un bogue</string>
-  <string name="donate">Faire un don</string>
+  <string name="donate">Faire un don (KDE Community)</string>
   <string name="source_code">Code source</string>
   <string name="licenses">Licences</string>
   <string name="website">Site Internet</string>
@@ -431,7 +430,7 @@
   <string name="about_kde_report_bugs_or_wishes">&lt;h1&gt;Signaler des bogues ou des souhaits&lt;/h1&gt; &lt;p&gt; Les logiciels peuvent toujours être améliorés et l\'équipe KDE est prête à le faire. Cependant, vous - la personne utilisatrice - devez nous dire quand quelque chose ne fonctionne pas comme prévu ou pourrait être mieux fait. KDE dispose d\'un système de suivi des bogues. Visitez &lt;a href=https://bugs.kde.org/&gt;https://bugs.kde.org/&lt;/a&gt; ou utilisez le bouton bouton « Signaler un bogue » de la page « A propos » pour signaler les bogues. Si vous avez une suggestion d\'amélioration, vous pouvez aussi utiliser le système de suivi des bogues pour enregistrer votre souhait. Veuillez vous assurer de bien utiliser le niveau de gravité appelée « Liste de souhaits ».</string>
   <string name="about_kde_join_kde">&lt;h1&gt;Rejoignez KDE&lt;/h1&gt; &lt;p&gt;Vous n\'avez pas besoin d\'être un développeur de logiciels pour être membre de l\'équipe de KDE. Vous pouvez rejoindre les équipes nationales qui traduisent les interfaces des programmes. Vous pouvez fournir des illustrations, des thèmes, des sons, et de la documentation améliorée. À vous de décider ! &lt;/p&gt; &lt;p&gt;Visitez la page &lt;a href=https://community.kde.org/Get_Involved&gt;https://community.kde.org/Get_Involved&lt;/a&gt; pour obtenir des informations sur certains projets auxquels vous pouvez participer.&lt;/p&gt; Si vous avez besoin de plus d\'informations ou de documentation, veuillez visitez la page &lt;a href=https://techbase.kde.org/&gt;https://techbase.kde.org/&lt;/a&gt;, qui vous fournira ce dont vous avez besoin.</string>
   <string name="about_kde_support_kde">&lt;h1&gt;Soutenir KDE&lt;/h1&gt; &lt;p&gt; Les logiciels de KDE sont et seront toujours disponibles gratuitement. Cependant, leur création n\'est pas gratuite. &lt;p&gt;Pour soutenir le développement, la communauté KDE a créée KDE e.V., une organisation à but non lucratif, légalement fondée en Allemagne. KDE e.V. représente la communauté KDE pour les questions juridiques et financières. Veuillez consulter la page &lt;a href=https://ev.kde.org/&gt;https://ev.kde.org/&lt;/a&gt; pour plus d\'informations sur KDE e.V.&lt;/p&gt; &lt;p&gt;KDE bénéficie de plusieurs types de contributions, y compris financières. Nous utilisons les fonds pour rembourser les membres et d\'autres personnes pour les dépenses qu\'ils engagent pour leurs contributions. D\'autres fonds sont utilisés pour le soutien juridique et l\'organisation de conférences et de réunions. Nous aimerions vous encourager à soutenir nos efforts par un don financier, en utilisant l\'un des moyens décrits sur la page &lt;a href=https://www.kde.org/community/donations/&gt;https://www.kde.org/community/donations/&lt;/a&gt;. &lt;/p&gt; Nous vous remercions par avance pour votre soutien.</string>
-  <string name="maintainer_and_developer">Mainteneur et développeur</string>
+  <string name="maintainer_and_developer">Mainteneur et développeur de KDE Connect</string>
   <string name="developer">Développeur</string>
   <string name="apple_support">Prise en charge de macOS. Travail en cours sur la prise en charge de iOS.</string>
   <string name="bug_fixes_and_general_improvements">Correction de bogues et améliorations générales</string>
@@ -442,7 +441,8 @@
   <string name="holger_kaelberer_task">Corrections du module externe de clavier sans fil et de bogues</string>
   <string name="saikrishna_arcot_task">Prise en charge de l\'utilisation du clavier dans le module d\'entrée à distance, corrections de bogues et améliorations générales</string>
   <string name="shellwen_chen_task">Implémentation de la sécurité de SFTP, amélioration de la maintenabilité de ce projet, corrections de bogues et améliorations générales</string>
-  <string name="everyone_else">Toutes les autres personnes ayant contribué à KDEConnect depuis plusieurs années</string>
+  <string name="sannidhya_roy_task">Mainteneur et développeur du projet Soduto</string>
+  <string name="everyone_else">Toutes les autres personnes ayant contribué à Soduto et à KDE Connect en amont au fil des années</string>
   <string name="send_clipboard">Envoyer le presse-papier</string>
   <string name="tap_to_execute">Tapotez pour lancer</string>
   <string name="plugin_stats">Statistiques des modules externes</string>
