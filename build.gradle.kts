@@ -38,7 +38,7 @@ android {
     namespace = "org.kde.kdeconnect_tp"
     compileSdk = 36
     defaultConfig {
-        applicationId = "org.kde.kdeconnect_tp"
+        applicationId = "com.thenoton.soduto"
         minSdk = 23
         targetSdk = 35
         versionCode = 13505
