@@ -234,7 +234,7 @@ public class NotificationsPlugin extends Plugin implements NotificationReceiver.
 
         NetworkPacket np = new NetworkPacket(PACKET_TYPE_NOTIFICATION);
 
-        Bitmap appIcon = extractIcon(statusBarNotification, notification);
+        Bitmap appIcon = SodutoNotificationsHelper.extractIcon(context, statusBarNotification, notification, this::drawableToBitmap);
 
         if (appIcon != null && !appDatabase.getPrivacy(packageName, AppDatabase.PrivacyOptions.BLOCK_IMAGES)) {
             byte[] iconBytes = getIconBytes(appIcon);
