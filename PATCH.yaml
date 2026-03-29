@@ -162,6 +162,69 @@ patches:
       upstream_issue: null
       drop_when: null
 
+    - file: build.gradle.kts
+      intent: Override applicationId to com.thenoton.soduto
+      conflict_prone: false
+      resolution_strategy: >-
+        One line changed in defaultConfig: applicationId = "com.thenoton.soduto".
+        Upstream rarely touches applicationId specifically (only versionCode/versionName
+        change frequently in defaultConfig, on separate lines). If a conflict occurs,
+        keep our applicationId value and accept upstream's other defaultConfig changes.
+      upstream_issue: null
+      drop_when: null
+
+    - file: fastlane/Appfile
+      intent: Update package_name to com.thenoton.soduto for Play Store deployment
+      conflict_prone: false
+      resolution_strategy: Keep ours. Upstream uses org.kde.kdeconnect_tp, we use com.thenoton.soduto.
+      upstream_issue: null
+      drop_when: null
+
+    - file: src/main/res/xml/fileprovider_paths.xml
+      intent: Fix file provider path to use Soduto's applicationId (was org.kde.kdeconnect_tp)
+      conflict_prone: false
+      resolution_strategy: >-
+        Keep ours. The path Android/data/com.thenoton.soduto/files/Pictures must
+        match our applicationId. If upstream changes this file, incorporate their
+        structural changes but keep our package name in the path.
+      upstream_issue: null
+      drop_when: null
+
+    - file: src/main/java/org/kde/kdeconnect/plugins/share/CompositeReceiveFileJob.java
+      intent: Use dynamic FileProvider authority (getPackageName() + ".fileprovider") instead of hardcoded org.kde.kdeconnect_tp
+      conflict_prone: false
+      resolution_strategy: Keep ours. This is a correctness fix upstream should have too.
+      upstream_issue: null
+      drop_when: Upstream fixes the hardcoded authority
+
+    - file: src/main/java/org/kde/kdeconnect/plugins/notifications/NotificationsPlugin.java
+      intent: Use dynamic package name check to avoid forwarding our own notifications
+      conflict_prone: false
+      resolution_strategy: Keep ours. This is a correctness fix upstream should have too.
+      upstream_issue: null
+      drop_when: Upstream fixes the hardcoded package name check
+
+    - file: src/main/java/org/kde/kdeconnect/plugins/mpris/MprisMediaSession.kt
+      intent: Use BuildConfig.APPLICATION_ID for MediaSession tag instead of hardcoded package name
+      conflict_prone: false
+      resolution_strategy: Keep ours. This is a correctness fix upstream should have too.
+      upstream_issue: null
+      drop_when: Upstream fixes the hardcoded tag
+
+    - file: src/main/java/org/kde/kdeconnect/plugins/runcommand/RunCommandWidgetConfigActivity.kt
+      intent: Use BuildConfig.APPLICATION_ID for SharedPreferences name instead of hardcoded package name
+      conflict_prone: false
+      resolution_strategy: Keep ours. This is a correctness fix upstream should have too.
+      upstream_issue: null
+      drop_when: Upstream fixes the hardcoded prefs name
+
+    - file: src/main/java/org/kde/kdeconnect/plugins/clipboard/ClipboardFloatingActivity.java
+      intent: Update ADB command examples in comments to use Soduto package name
+      conflict_prone: false
+      resolution_strategy: Keep ours. Comment documentation only.
+      upstream_issue: null
+      drop_when: null
+
   added:
     - file: .github/workflows/sync-upstream.yml
       intent: Automated upstream ref syncing via GitHub Actions
