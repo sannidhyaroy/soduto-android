@@ -1,0 +1,45 @@
+# Syncs all branches and tags from the upstream KDE Connect Android repository into this repository under the upstream/* namespace.
+#
+# This workflow ONLY updates upstream/* refs. It never touches main or any downstream branches. Replicates a custom hybrid of bare and mirror repo refspec strategy:
+#
+#   fetch: +refs/*:refs/upstream/*
+#   push:  +refs/upstream/heads/*:refs/heads/upstream/*
+#          +refs/upstream/tags/*:refs/tags/upstream/*
+
+name: Sync Upstream Refs
+
+on:
+  schedule:
+    - cron: "0 0 */2 * *" # Every 2 days at midnight UTC
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Configure upstream remote
+        run: |
+          git remote add upstream https://invent.kde.org/network/kdeconnect-android.git
+          git config --unset-all remote.upstream.fetch
+          git config --add remote.upstream.fetch '+refs/*:refs/upstream/*'
+
+      - name: Configure origin remote
+        run: |
+          git config --unset-all remote.origin.push || true
+          git config --add remote.origin.push "+refs/upstream/heads/*:refs/heads/upstream/*"
+          git config --add remote.origin.push "+refs/upstream/tags/*:refs/tags/upstream/*"
+
+      - name: Fetch upstream
+        run: git fetch upstream --prune --no-tags
+
+      - name: Push upstream branches and tags
+        run: |
+          git push origin --force --prune

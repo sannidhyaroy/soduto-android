@@ -1,0 +1,179 @@
+# Checks whether upstream/master has moved beyond our current base_commit and notifies via a GitHub issue. Runs after sync-upstream completes (which ensures upstream/* refs are fresh) and can be triggered manually.
+# If rebase is clean:   creates/updates an issue with integration instructions.
+# If rebase conflicts:  creates/updates an issue listing the conflicting files.
+# If already up to date: closes the issue if one exists.
+# The actual rebase is always done locally, this workflow only notifies.
+
+name: Notify Upstream Integration
+
+on:
+  workflow_run:
+    workflows: ["Sync Upstream Refs"]
+    types: [completed]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+    if: ${{ github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success' }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Fetch all remote refs
+        run: git fetch origin
+
+      - name: Check upstream status
+        id: status
+        run: |
+          BASE=$(grep '^\s*base_commit:' PATCH.yaml | head -1 | awk '{print $2}')
+          UPSTREAM_TIP=$(git rev-parse origin/upstream/master)
+
+          echo "base=$BASE" >> $GITHUB_OUTPUT
+          echo "upstream_tip=$UPSTREAM_TIP" >> $GITHUB_OUTPUT
+
+          if [ "$BASE" = "$UPSTREAM_TIP" ]; then
+            echo "up_to_date=true" >> $GITHUB_OUTPUT
+          else
+            COUNT=$(git rev-list --count "$BASE".."$UPSTREAM_TIP")
+            echo "up_to_date=false" >> $GITHUB_OUTPUT
+            echo "new_commits=$COUNT" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Test rebase
+        if: steps.status.outputs.up_to_date == 'false'
+        id: rebase
+        run: |
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git config user.name "github-actions[bot]"
+          git checkout -b ci/test-rebase
+
+          if git rebase origin/upstream/master 2>/tmp/rebase-out; then
+            echo "clean=true" >> $GITHUB_OUTPUT
+          else
+            CONFLICTS=$(git diff --name-only --diff-filter=U | paste -sd ',')
+            echo "clean=false" >> $GITHUB_OUTPUT
+            echo "conflicts=$CONFLICTS" >> $GITHUB_OUTPUT
+            git rebase --abort
+          fi
+
+          git checkout main
+          git branch -D ci/test-rebase
+
+      - name: Ensure upstream-sync label exists
+        uses: actions/github-script@v7
+        with:
+          script: |
+            try {
+              await github.rest.issues.createLabel({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                name: 'upstream-sync',
+                color: '0075ca',
+                description: 'Upstream integration status'
+              });
+            } catch (e) {
+              // Label already exists, ignore
+            }
+
+      - name: Manage issue
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const upToDate   = '${{ steps.status.outputs.up_to_date }}' === 'true';
+            const clean      = '${{ steps.rebase.outputs.clean }}' === 'true';
+            const newCommits = '${{ steps.status.outputs.new_commits }}';
+            const upstreamTip = '${{ steps.status.outputs.upstream_tip }}';
+            const base       = '${{ steps.status.outputs.base }}';
+            const rawConflicts = '${{ steps.rebase.outputs.conflicts }}';
+
+            // Find existing open sync issue by label
+            const { data: openIssues } = await github.rest.issues.listForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              labels: 'upstream-sync',
+              state: 'open'
+            });
+            const existing = openIssues[0];
+
+            if (upToDate) {
+              if (existing) {
+                await github.rest.issues.update({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  issue_number: existing.number,
+                  state: 'closed',
+                  body: existing.body + '\n\n---\n_Closed automatically — main is now up to date with upstream._'
+                });
+                core.info(`Closed issue #${existing.number} — up to date.`);
+              } else {
+                core.info('Up to date. No issue to manage.');
+              }
+              return;
+            }
+
+            const conflictList = rawConflicts ? rawConflicts.split(',').map(f => `- \`${f.trim()}\``).join('\n') : '';
+
+            const statusLine = clean ? '✅ **Clean** — rebase can proceed without conflicts.' : '⚠️ **Conflicts detected** — manual resolution required.';
+
+            const conflictSection = clean ? '' : `\n\n**Conflicting files:**\n${conflictList}\n\nCheck \`PATCH.yaml\` for the \`resolution_strategy\` of each file.`;
+
+            const date = new Date().toISOString().split('T')[0];
+
+            const body = [
+              `**${newCommits} new upstream commit(s)** are available since the current base.`,
+              '',
+              `**Rebase status:** ${statusLine}${conflictSection}`,
+              '',
+              '**Commits to integrate:**',
+              '```bash',
+              `git log --oneline ${base.substring(0,12)}..origin/upstream/master`,
+              '```',
+              '',
+              '**To integrate locally:**',
+              '```bash',
+              'git fetch origin',
+              'git rebase origin/upstream/master',
+              '# Resolve any conflicts, then:',
+              'git push --force-with-lease',
+              '```',
+              '',
+              'After rebasing, update `upstream.base_commit` and `last_rebase` in `PATCH.yaml`, and append an entry to `SYNC_LOG.yaml`.',
+              '',
+              `| | |`,
+              `|---|---|`,
+              `| **Current base** | \`${base}\` |`,
+              `| **Upstream tip** | \`${upstreamTip}\` |`,
+              `| **New commits** | ${newCommits} |`,
+              '',
+              `_Last checked: ${date}_`
+            ].join('\n');
+
+            const title = `Upstream sync available — ${newCommits} new commit(s)${clean ? '' : ' (conflicts)'}`;
+
+            if (existing) {
+              await github.rest.issues.update({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: existing.number,
+                title,
+                body
+              });
+              core.info(`Updated issue #${existing.number}.`);
+            } else {
+              const { data: created } = await github.rest.issues.create({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                title,
+                body,
+                labels: ['upstream-sync']
+              });
+              core.info(`Created issue #${created.number}.`);
+            }
