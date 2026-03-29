@@ -1,21 +1,31 @@
-KDEConnect fournit un ensemble de fonctionnalités pour intégrer votre flux de travail entre périphériques :
+Soduto est un client compatible KDE Connect. Il permet une meilleure intégration entre vos téléphones, ordinateurs de bureau et tablettes.
 
-- Transfert des fichiers entre vos périphériques.
-- Accès aux fichiers sur votre téléphone depuis votre ordinateur, sans fil.
-- Presse-papier partagé : copier et coller entre vos périphériques.
-- Apparition de notifications pour les appels et les messages entrants sur votre ordinateur.
-- Pavé tactile virtuel : utilisation de l'écran de votre téléphone comme pavé tactile pour votre ordinateur.
-- Synchronisation de vos notifications : accès à vos notifications téléphoniques depuis votre ordinateur et réponses aux messages.
-- Télé-commande multimédia : utilisation de votre téléphone comme télécommande pour les lecteurs de média sous Linux.
-- Connexion au Wifi : aucun connexion USB ou Bluetooth nécessaire.
-- Chiffrement « TLS » de bout en bout : vos informations sont en sécurité.
+Soduto fournit un ensemble de fonctionnalités pour intégrer votre flux de travail entre vos appareils :
+- Transférer des fichiers entre vos appareils
+- Accéder aux fichiers de votre téléphone depuis votre ordinateur, sans câble
+- Presse-papier partagé : copier-coller entre vos appareils
+- Recevoir des notifications d'appels entrants sur votre ordinateur
+- Pavé tactile virtuel : utiliser l'écran de votre téléphone comme pavé tactile pour votre ordinateur et vice-versa
+- Clavier distant : utiliser le clavier de votre téléphone pour taper sur votre ordinateur et vice-versa
+- Tablette graphique : utiliser l'écran de votre téléphone comme tablette graphique sensible à la pression
+- Télécommande de présentation : utiliser votre téléphone comme télécommande de diaporama
+- Synchronisation des notifications : accéder aux notifications de votre téléphone depuis votre ordinateur, répondre aux messages ou effectuer des actions directement
+- Synchronisation multimédia : utiliser votre téléphone comme télécommande pour les lecteurs multimédias de vos appareils distants et vice-versa
+- Exécuter des commandes : déclencher des commandes sur votre bureau depuis votre téléphone
+- Retrouver mon appareil : faire sonner votre téléphone ou votre bureau à distance
+- Connexion WiFi et Bluetooth : aucun câble USB nécessaire
+- Chiffrement TLS de bout en bout : vos données restent privées
 
-Veuillez noter que vous devrez installer KDEConnect sur votre ordinateur pour que cette application fonctionne et maintenir la version de bureau à jour avec la version Android pour les dernières fonctionnalités.
+Limitations connues (des solutions de contournement sont mentionnées dans la documentation) :
+- La synchronisation du presse-papier nécessite un appui manuel sur Android 10 et supérieur, en raison des restrictions d'accès au presse-papier imposées par Google
+- Certains emplacements de stockage peuvent ne pas être accessibles sur Android 11 et supérieur pour la navigation dans le système de fichiers distant
+- Sur Android 15 et supérieur, le contenu sensible des notifications (OTP, mots de passe) est masqué par défaut pour toutes les applications
 
-Informations sur les permissions sensibles :
-* Permission d'accessibilité : nécessaire pour recevoir les informations d'un autre périphérique pour contrôler votre téléphone Android, si vous utilisez la fonction de télécommande.
-* Permission pour emplacement en arrière-plan : nécessaire pour savoir à quel réseau Wifi auquel vous êtes connecté, si vous utilisez la fonctionnalité de réseaux de confiance.
+Permissions sensibles :
+- Permission d'accessibilité : nécessaire pour recevoir les saisies d'un autre appareil afin de contrôler votre téléphone Android, si vous utilisez la fonction de saisie à distance
+- Permission de localisation en arrière-plan : nécessaire pour connaître le réseau WiFi auquel vous êtes connecté, si vous utilisez la fonctionnalité Réseaux de confiance
 
-KDEConnect n'envoie jamais d'informations à KDE ni à aucun tiers. KDEConnect envoie des données d'un périphérique à un autre à l'aide du réseau local, mais jamais par Internet et en utilisant le chiffrement de bout en bout.
+Soduto n'envoie jamais de données à aucun serveur. Toutes les communications se font directement entre vos appareils via votre réseau local avec un chiffrement TLS de bout en bout, jamais via Internet.
+Veuillez noter que vous devrez installer Soduto sur macOS, ou tout autre client KDE Connect sur d'autres appareils, pour que cette application puisse s'y connecter, et maintenir toutes les versions à jour pour bénéficier des dernières fonctionnalités.
 
-Cette application fait partie d'un projet « Open source ». Il existe grâce à toutes les personnes qui y ont contribué. Veuillez visiter le site Internet pour accéder au code source.
+Cette application fait partie d'un projet open source et existe grâce à toutes les personnes qui y ont contribué. Retrouvez le code source sur [GitHub](https://github.com/sannidhyaroy/soduto-android).

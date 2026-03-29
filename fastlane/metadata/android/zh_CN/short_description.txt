@@ -1,1 +1,1 @@
-KDE Connect 可以整合您的智能手机和电脑
+Soduto — 兼容 KDE Connect 的客户端，连接手机、电脑与平板。

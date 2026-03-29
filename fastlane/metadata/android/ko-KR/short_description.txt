@@ -1,1 +1,1 @@
-KDE Connect는 스마트폰과 컴퓨터를 통합합니다
+Soduto — KDE Connect 호환 클라이언트로 기기 간을 원활하게 연결합니다.

@@ -1,1 +1,1 @@
-KDE Connect integrates your smartphone and computer
+Soduto — a KDE Connect compatible client for your phone, desktop and tablet

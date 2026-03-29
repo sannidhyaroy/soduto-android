@@ -1,21 +1,31 @@
-KDE Connect provides a set of features to integrate your workflow across devices:
+Soduto is a KDE Connect compatible client. It allows better integration between your phones, desktops and tablets.
 
-- Transfer files between your devices.
-- Access files on your phone from your computer, without wires.
-- Shared clipboard: copy and paste between your devices.
-- Get notifications for incoming calls and messages on your computer.
-- Virtual touchpad: Use your phone screen as your computer's touchpad.
-- Notifications sync: Access your phone notifications from your computer and reply to messages.
-- Multimedia remote control: Use your phone as a remote for Linux media players.
-- WiFi connection: no USB wire or bluetooth needed.
-- End-to-end TLS encryption: your information is safe.
+Soduto provides a set of features to integrate your workflow across devices:
+- Transfer files between your devices
+- Access files on your phone from your computer, without cables
+- Shared clipboard: copy and paste between your devices
+- Receive notifications for incoming calls on your computer
+- Virtual touchpad: use your phone screen as your computer's touchpad and vice-versa
+- Remote Keyboard: use your phone's keyboard to type on your computer and vice-versa
+- Drawing Pad: use your phone screen as a pressure-sensitive tablet
+- Presentation Remote: use your phone as a presenter remote
+- Notification sync: access your phone's notifications from your computer, reply to messages or take actions directly
+- Multimedia sync: use your phone as a remote for media players on your remote devices or vice-versa
+- Run Commands: trigger commands on your desktop from your phone
+- Find My Device: ring your phone or desktop remotely
+- WiFi and Bluetooth connection: no USB cable needed
+- End-to-end TLS encryption: your data stays private
 
-Please note you will need to install KDE Connect on your computer for this app to work, and keep the desktop version up-to-date with the Android version for the latest features to work.
+Known limitations (workarounds are mentioned in documentation):
+- Clipboard sync requires a manual tap on Android 10 and higher, due to Google's clipboard access restrictions
+- Some storage locations may not be accessible on Android 11 and higher for remote filesystem browsing
+- On Android 15 and higher, sensitive notification content (OTPs, passwords) is hidden from all apps by default
 
-Sensitive permissions information:
-* Accessibility permission: Required to receive input from another device to control your Android phone, if you use the Remote Input feature.
-* Background location permission: Required to know to which WiFi network you are connected to, if you use the Trusted Networks feature.
+Sensitive permissions:
+- Accessibility permission: required to receive input from another device to control your Android phone, if you use the Remote Input feature
+- Background location permission: required to know which WiFi network you are connected to, if you use the Trusted Networks feature
 
-KDE Connect never sends any information to KDE nor to any third party. KDE Connect sends data from one device to the other directly using the local network, never through the internet, and using end to end encryption.
+Soduto never sends any data to any server. All communication happens directly between your devices over your local network using end-to-end TLS encryption, never through the internet.
+Please note you will need to install Soduto on macOS, or any other KDE Connect client on other devices for this app to connect to that device, and keep the all platform versions up-to-date for the latest features to work.
 
-This app is part of an open source project and it exists thanks to all the people who contributed to it. Visit the website to grab the source code.
+This app is part of an open source project and it exists thanks to all the people who contributed to it. Grab the source code on [GitHub](https://github.com/sannidhyaroy/soduto-android).
