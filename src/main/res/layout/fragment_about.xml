@@ -43,14 +43,16 @@ SPDX-License-Identifier: GPL-2.0-only OR GPL-3.0-only OR LicenseRef-KDE-Accepted
                     android:layout_height="wrap_content"
                     android:layout_width="match_parent">
 
-                    <ImageView
+                    <com.google.android.material.imageview.ShapeableImageView
                         android:id="@+id/app_icon"
                         android:layout_width="52dp"
                         android:layout_height="52dp"
-                        android:layout_gravity="top"
-                        android:paddingTop="@dimen/nav_header_vertical_spacing"
-                        android:paddingBottom="4dp"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginTop="@dimen/nav_header_vertical_spacing"
+                        android:layout_marginBottom="@dimen/nav_header_vertical_spacing"
+                        android:layout_marginEnd="12dp"
                         android:importantForAccessibility="no"
+                        app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.AppIcon"
                         tools:src="@drawable/icon" />
 
                     <LinearLayout

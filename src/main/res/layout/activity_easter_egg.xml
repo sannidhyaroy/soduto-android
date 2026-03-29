@@ -12,14 +12,14 @@ SPDX-License-Identifier: GPL-2.0-only OR GPL-3.0-only OR LicenseRef-KDE-Accepted
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#1d99f3"
+    android:background="#92C954"
     android:gravity="center">
 
     <ImageView
         android:id="@+id/logo"
         android:layout_width="396dp"
         android:layout_height="396dp"
-        android:src="@drawable/ic_kde_48dp"
+        android:src="@drawable/ic_launcher_foreground"
         android:contentDescription="@string/easter_egg" />
 
     <TextView

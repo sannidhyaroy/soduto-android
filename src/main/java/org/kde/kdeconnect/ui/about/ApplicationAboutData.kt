@@ -19,6 +19,7 @@ fun getApplicationAboutData(context: Context): AboutData {
                               R.string.everyone_else)
 
     aboutData.authors += AboutPerson("Albert Vaca Cintora", R.string.maintainer_and_developer, "albertvaka+kde@gmail.com")
+    aboutData.authors += AboutPerson("Sannidhya Roy", R.string.sannidhya_roy_task, "sannidhya@thenoton.com")
     aboutData.authors += AboutPerson("Aleix Pol", R.string.developer, "aleixpol@kde.org")
     aboutData.authors += AboutPerson("Inoki Shaw", R.string.apple_support, "veyx.shaw@gmail.com")
     aboutData.authors += AboutPerson("Matthijs Tijink", R.string.developer, "matthijstijink@gmail.com")

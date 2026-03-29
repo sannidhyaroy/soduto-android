@@ -22,7 +22,7 @@ import org.kde.kdeconnect_tp.databinding.ActivityEasterEggBinding
 import kotlin.math.PI
 import kotlin.math.atan2
 
-private val KDE_ICON_BACKGROUND_COLOR = Color.rgb(29, 153, 243)
+private val KDE_ICON_BACKGROUND_COLOR = Color.rgb(146, 201, 84)
 private val KONQI_BACKGROUND_COLOR = Color.rgb(191, 255, 0)
 
 class EasterEggActivity : AppCompatActivity(), SensorEventListener {
@@ -39,6 +39,7 @@ class EasterEggActivity : AppCompatActivity(), SensorEventListener {
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_NOSENSOR
 
         setBgColor(KDE_ICON_BACKGROUND_COLOR)
+        binding!!.logo.setColorFilter(ContextCompat.getColor(this, android.R.color.white))
 
         sensorManager = getSystemService(SENSOR_SERVICE) as SensorManager
         if (hasAccelerometer()) {

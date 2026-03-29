@@ -61,6 +61,11 @@ SPDX-License-Identifier: GPL-2.0-only OR GPL-3.0-only OR LicenseRef-KDE-Accepted
         <item name="android:backgroundDimEnabled">false</item>
     </style>
 
+    <style name="ShapeAppearanceOverlay.AppIcon" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">11dp</item>
+    </style>
+
     <style name="AboutButton">
         <item name="android:layout_width">84dp</item>
         <item name="android:layout_height">84dp</item>
