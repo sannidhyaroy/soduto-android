@@ -198,11 +198,16 @@ patches:
       drop_when: Upstream fixes the hardcoded authority
 
     - file: src/main/java/org/kde/kdeconnect/plugins/notifications/NotificationsPlugin.java
-      intent: Use dynamic package name check to avoid forwarding our own notifications
+      intent: >-
+        Dynamic package name check to avoid forwarding our own notifications;
+        delegate extractIcon to SodutoNotificationsHelper for improved icon hierarchy
       conflict_prone: false
-      resolution_strategy: Keep ours. This is a correctness fix upstream should have too.
+      resolution_strategy: >-
+        Two independent one-line changes. If upstream rewrites extractIcon, evaluate
+        whether SodutoNotificationsHelper is still needed and drop it if equivalent.
+        Keep the package name check regardless.
       upstream_issue: null
-      drop_when: Upstream fixes the hardcoded package name check
+      drop_when: Upstream fixes the hardcoded package name check and improves extractIcon
 
     - file: src/main/java/org/kde/kdeconnect/plugins/mpris/MprisMediaSession.kt
       intent: Use BuildConfig.APPLICATION_ID for MediaSession tag instead of hardcoded package name
@@ -417,6 +422,9 @@ patches:
         modifies listings for these locales, delete them again on rebase.
 
   added:
+    - file: src/main/java/org/kde/kdeconnect/plugins/notifications/SodutoNotificationsHelper.kt
+      intent: New downstream helper for improved notification icon extraction — 3-level hierarchy with launcher icon fallback and adaptive icon compositing toggle
+
     - file: src/main/res/xml-v31/remotecommandplugin_widget.xml
       intent: API 31+ variant of widget provider — adds previewLayout for live widget picker preview and targetCellWidth/Height for default grid size
 
