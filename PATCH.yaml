@@ -308,6 +308,13 @@ patches:
       upstream_issue: null
       drop_when: null
 
+    - file: src/main/res/layout/widget_remotecommandplugin.xml
+      intent: Replace KDE Connect icon with Soduto foreground in widget title bar; fix ImageView size
+      conflict_prone: false
+      resolution_strategy: Keep ours. If upstream changes this layout, reapply our icon and dimensions.
+      upstream_issue: null
+      drop_when: null
+
     - file: src/main/res/layout/fragment_about.xml
       intent: Use ShapeableImageView with rounded corners for About page icon; fix vertical alignment and icon/text spacing
       conflict_prone: false
@@ -410,6 +417,9 @@ patches:
         modifies listings for these locales, delete them again on rebase.
 
   added:
+    - file: src/main/res/xml-v31/remotecommandplugin_widget.xml
+      intent: API 31+ variant of widget provider — adds previewLayout for live widget picker preview and targetCellWidth/Height for default grid size
+
     - file: .github/workflows/sync-upstream.yml
       intent: Automated upstream ref syncing via GitHub Actions
 
