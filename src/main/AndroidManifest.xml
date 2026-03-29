@@ -74,7 +74,7 @@ SPDX-License-Identifier: GPL-2.0-only OR GPL-3.0-only OR LicenseRef-KDE-Accepted
     <application
         android:icon="@mipmap/ic_launcher"
         android:roundIcon="@mipmap/ic_launcher_round"
-        android:label="@string/kde_connect"
+        android:label="@string/app_name"
         android:banner="@mipmap/ic_launcher_banner"
         android:supportsRtl="true"
         android:allowBackup="false"
@@ -159,7 +159,7 @@ SPDX-License-Identifier: GPL-2.0-only OR GPL-3.0-only OR LicenseRef-KDE-Accepted
         </activity>
         <activity
             android:name="org.kde.kdeconnect.plugins.share.SendFileActivity"
-            android:label="KDE Connect"
+            android:label="@string/app_name"
             android:exported="true"
             android:parentActivityName="org.kde.kdeconnect.ui.MainActivity">
             <meta-data

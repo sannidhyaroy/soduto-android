@@ -227,7 +227,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
         setTitle(R.string.settings_export_logs)
         setSummary(R.string.settings_export_logs_text)
         onPreferenceClickListener = Preference.OnPreferenceClickListener {
-            exportLogs.launch(CreateFileParams("text/plain", "kdeconnect-log.txt"))
+            exportLogs.launch(CreateFileParams("text/plain", "soduto-log.txt"))
             true
         }
     }
@@ -240,7 +240,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
             val process = Runtime.getRuntime().exec(arrayOf("logcat", "-d"))
             val reader = InputStreamReader(process.inputStream)
             output.use {
-                it.write("KDE Connect ${BuildConfig.VERSION_NAME}\n".toByteArray(Charsets.UTF_8))
+                it.write("Soduto ${BuildConfig.VERSION_NAME}\n".toByteArray(Charsets.UTF_8))
                 it.write("Android ${Build.VERSION.RELEASE} (${Build.MANUFACTURER} ${Build.MODEL})\n".toByteArray(Charsets.UTF_8))
                 IOUtils.copy(reader, it, Charsets.UTF_8)
             }

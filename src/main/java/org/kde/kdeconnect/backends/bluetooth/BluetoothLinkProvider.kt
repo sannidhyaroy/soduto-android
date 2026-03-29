@@ -135,7 +135,7 @@ class BluetoothLinkProvider(private val context: Context) : BaseLinkProvider() {
 
         override fun run() {
             serverSocket = try {
-                bluetoothAdapter!!.listenUsingRfcommWithServiceRecord("KDE Connect", SERVICE_UUID)
+                bluetoothAdapter!!.listenUsingRfcommWithServiceRecord("Soduto", SERVICE_UUID)
             } catch (e: IOException) {
                 Log.e("KDEConnect", "Exception", e)
                 return

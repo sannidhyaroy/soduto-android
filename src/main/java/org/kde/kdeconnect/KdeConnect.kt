@@ -51,7 +51,7 @@ class KdeConnect : Application() {
         super.onCreate()
         _instance = this
         setupSL4JLogging()
-        Log.d("KdeConnect/Application", "onCreate")
+        Log.d("Soduto/Application", "onCreate")
         ThemeUtil.setUserPreferredTheme(this)
         DeviceHelper.initializeDeviceId(this)
         RsaHelper.initialiseRsaKeys(this)
@@ -89,11 +89,11 @@ class KdeConnect : Application() {
     private fun setupSL4JLogging() {
         HandroidLoggerAdapter.DEBUG = BuildConfig.DEBUG
         HandroidLoggerAdapter.ANDROID_API_LEVEL = Build.VERSION.SDK_INT
-        HandroidLoggerAdapter.APP_NAME = "KDEConnect"
+        HandroidLoggerAdapter.APP_NAME = "Soduto"
     }
 
     override fun onTerminate() {
-        Log.d("KdeConnect/Application", "onTerminate")
+        Log.d("Soduto/Application", "onTerminate")
         super.onTerminate()
     }
 
@@ -126,7 +126,7 @@ class KdeConnect : Application() {
         // Log.e("BackgroundService", "Loading remembered trusted devices")
         val trustedDevices = TrustedDevices.getAllTrustedDevices(this)
         trustedDevices.asSequence()
-            .onEach { Log.d("KdeConnect", "Loading device $it") }
+            .onEach { Log.d("Soduto", "Loading device $it") }
             .forEach {
                 try {
                     val device = Device(applicationContext, it)
@@ -142,7 +142,7 @@ class KdeConnect : Application() {
                     device.addPairingCallback(devicePairingCallback)
                 } catch (e: CertificateException) {
                     Log.w(
-                        "KdeConnect",
+                        "Soduto",
                         "Couldn't load the certificate for a remembered device. Removing from trusted list.", e
                     )
                     TrustedDevices.removeTrustedDevice(this, it)
@@ -188,14 +188,14 @@ class KdeConnect : Application() {
         @WorkerThread
         override fun onConnectionLost(link: BaseLink) {
             val device = devices[link.deviceId]
-            Log.i("KDE/onConnectionLost", "removeLink, deviceId: ${link.deviceId}")
+            Log.i("Soduto/onConnectionLost", "removeLink, deviceId: ${link.deviceId}")
             if (device != null) {
                 device.removeLink(link)
                 if (!device.isReachable && !device.isPaired) {
                     scheduleForDeletion(device)
                 }
             } else {
-                Log.d("KDE/onConnectionLost", "Removing connection to unknown device")
+                Log.d("Soduto/onConnectionLost", "Removing connection to unknown device")
             }
             onDeviceListChanged()
         }
@@ -204,7 +204,7 @@ class KdeConnect : Application() {
         override fun onDeviceInfoUpdated(deviceInfo: DeviceInfo) {
             val device = devices[deviceInfo.id]
             if (device == null) {
-                Log.e("KdeConnect", "onDeviceInfoUpdated for an unknown device")
+                Log.e("Soduto", "onDeviceInfoUpdated for an unknown device")
                 return
             }
             val hasChanges = device.updateDeviceInfo(deviceInfo)
@@ -223,18 +223,18 @@ class KdeConnect : Application() {
         //       `Runtime.getRuntime().gc()` to actually make them disappear. If we have leaks,
         //       deleting devices from the map is actually counterproductive because each time we
         //       detect the same device, a new Device object will be created (and leaked again).
-        Log.i("KdeConnect", "Scheduled for deletion: $device, paired: ${device.isPaired}, reachable: ${device.isReachable}")
+        Log.i("Soduto", "Scheduled for deletion: $device, paired: ${device.isPaired}, reachable: ${device.isReachable}")
         ThreadHelper.execute {
             try {Thread.sleep(1000)} catch (_: InterruptedException) { }
             if (device.isReachable) {
-                Log.i("KdeConnect", "Not deleting device since it's reachable again: $device")
+                Log.i("Soduto", "Not deleting device since it's reachable again: $device")
                 return@execute
             }
             if (device.isPaired) {
-                Log.i("KdeConnect", "Not deleting device since it's still paired: $device")
+                Log.i("Soduto", "Not deleting device since it's still paired: $device")
                 return@execute
             }
-            Log.i("KdeConnect", "Deleting unpaired and unreachable device: $device")
+            Log.i("Soduto", "Deleting unpaired and unreachable device: $device")
             device.removePairingCallback(devicePairingCallback)
             devices.remove(device.deviceId)
         }
