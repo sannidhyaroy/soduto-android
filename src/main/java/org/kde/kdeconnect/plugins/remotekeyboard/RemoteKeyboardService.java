@@ -8,9 +8,6 @@ package org.kde.kdeconnect.plugins.remotekeyboard;
 
 import android.content.Intent;
 import android.inputmethodservice.InputMethodService;
-import android.inputmethodservice.Keyboard;
-import android.inputmethodservice.KeyboardView;
-import android.inputmethodservice.KeyboardView.OnKeyboardActionListener;
 import android.os.Handler;
 import android.util.Log;
 import android.view.View;
@@ -26,11 +23,8 @@ import org.kde.kdeconnect.ui.PluginSettingsActivity;
 import org.kde.kdeconnect_tp.R;
 
 import java.util.ArrayList;
-import java.util.List;
 
-public class RemoteKeyboardService
-        extends InputMethodService
-        implements OnKeyboardActionListener {
+public class RemoteKeyboardService extends InputMethodService {
 
     /**
      * Reference to our instance
@@ -43,22 +37,14 @@ public class RemoteKeyboardService
      */
     public boolean visible = false;
 
-    private KeyboardView inputView = null;
+    private SodutoRemoteKeyboardView inputView = null;
 
     Handler handler;
 
     void updateInputView() {
         if (inputView == null)
             return;
-        Keyboard currentKeyboard = inputView.getKeyboard();
-        List<Keyboard.Key> keys = currentKeyboard.getKeys();
-        boolean connected = RemoteKeyboardPlugin.isConnected();
-//        Log.d("RemoteKeyboardService", "Updating keyboard connection icon, connected=" + connected);
-        int disconnectedIcon = R.drawable.ic_phonelink_off_36dp;
-        int connectedIcon = R.drawable.ic_phonelink_36dp;
-        int statusKeyIdx = 3;
-        keys.get(statusKeyIdx).icon = ContextCompat.getDrawable(this, connected ? connectedIcon : disconnectedIcon);
-        inputView.invalidateKey(statusKeyIdx);
+        inputView.updateConnectionStatus(RemoteKeyboardPlugin.isConnected());
     }
 
     @Override
@@ -79,11 +65,8 @@ public class RemoteKeyboardService
 
     @Override
     public View onCreateInputView() {
-//        Log.d("RemoteKeyboardService", "onCreateInputView connected=" + RemoteKeyboardPlugin.isConnected());
-        inputView = new KeyboardView(this, null);
-        inputView.setKeyboard(new Keyboard(this, R.xml.remotekeyboardplugin_keyboard));
-        inputView.setPreviewEnabled(false);
-        inputView.setOnKeyboardActionListener(this);
+        inputView = new SodutoRemoteKeyboardView(this);
+        inputView.setOnKeyPressListener(this::onPress);
         updateInputView();
         return inputView;
     }
@@ -120,7 +103,6 @@ public class RemoteKeyboardService
         getWindow().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
     }
 
-    @Override
     public void onPress(int primaryCode) {
         switch (primaryCode) {
             case 0: {  // "hide keyboard"
@@ -169,31 +151,4 @@ public class RemoteKeyboardService
         }
     }
 
-    @Override
-    public void onKey(int primaryCode, int[] keyCodes) {
-    }
-
-    @Override
-    public void onText(CharSequence text) {
-    }
-
-    @Override
-    public void swipeRight() {
-    }
-
-    @Override
-    public void swipeLeft() {
-    }
-
-    @Override
-    public void swipeDown() {
-    }
-
-    @Override
-    public void swipeUp() {
-    }
-
-    @Override
-    public void onRelease(int primaryCode) {
-    }
 }

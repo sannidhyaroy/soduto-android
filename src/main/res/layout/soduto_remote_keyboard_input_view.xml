@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!--
+SPDX-FileCopyrightText: 2026 Sannidhya Roy <sannidhya@thenoton.com>
+
+SPDX-License-Identifier: GPL-2.0-only OR GPL-3.0-only OR LicenseRef-KDE-Accepted-GPL
+-->
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="?attr/colorSurfaceContainerHighest"
+    android:baselineAligned="false"
+    android:orientation="horizontal"
+    android:paddingTop="8dp"
+    android:paddingBottom="8dp">
+
+    <!-- Hide keyboard -->
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:gravity="center">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_hide_keyboard"
+            style="@style/Widget.Material3.Button.IconButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="@string/remotekeyboard_hide_keyboard"
+            android:text=""
+            app:icon="@drawable/ic_keyboard_hide_36dp"
+            app:iconTint="?attr/colorOnSurface" />
+    </LinearLayout>
+
+    <!-- Settings -->
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:gravity="center">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_settings"
+            style="@style/Widget.Material3.Button.IconButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="@string/open_settings"
+            android:text=""
+            app:icon="@drawable/ic_settings_white_32dp"
+            app:iconTint="?attr/colorOnSurface" />
+    </LinearLayout>
+
+    <!-- Switch keyboard -->
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:gravity="center">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_switch_keyboard"
+            style="@style/Widget.Material3.Button.IconButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="@string/remotekeyboard_switch_keyboard"
+            android:text=""
+            app:icon="@drawable/ic_action_keyboard_24dp"
+            app:iconTint="?attr/colorOnSurface" />
+    </LinearLayout>
+
+    <!-- Connection status -->
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:gravity="center">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_connection_status"
+            style="@style/Widget.Material3.Button.IconButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="@string/remotekeyboard_not_connected"
+            android:text=""
+            app:icon="@drawable/ic_phonelink_36dp"
+            app:iconTint="?attr/colorOnSurface" />
+    </LinearLayout>
+
+</LinearLayout>
