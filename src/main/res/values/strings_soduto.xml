@@ -9,4 +9,16 @@ SPDX-License-Identifier: GPL-2.0-only OR GPL-3.0-only OR LicenseRef-KDE-Accepted
 <resources>
     <string name="remotekeyboard_hide_keyboard">Hide keyboard</string>
     <string name="remotekeyboard_switch_keyboard">Switch keyboard</string>
+
+    <!-- Notification sync settings screen -->
+    <string name="notification_sync_settings_title">Notification Sync Settings</string>
+    <string name="notification_icon_section_title">Notification Icons</string>
+    <string name="notification_icon_row_subtitle">Tap to configure icon levels</string>
+    <string name="notification_icon_section_desc">Configure how app icons are chosen and rendered when forwarding notifications to connected devices (Enabled levels are tried top to bottom and first available is sent)</string>
+    <string name="notification_icon_large">Include android large notification icon (contact photo, album art, etc.)</string>
+    <string name="notification_icon_launcher">Include source application icon</string>
+    <string name="notification_icon_small">Include monochrome status bar icon</string>
+    <string name="notification_icon_device_shape">Match home screen icon shape</string>
+    <string name="notification_filter_section_title">Notification Filter</string>
+    <string name="notification_filter_section_desc">Choose which apps can send notifications to connected devices (Long-press an app for per-app privacy options)</string>
 </resources>

@@ -75,6 +75,8 @@ public class NotificationFilterActivity extends BaseActivity<ActivityNotificatio
     private List<AppListInfo> mAllApps;
     private List<AppListInfo> apps; // Filtered data.
 
+    private SodutoNotificationFilterController sodutoIconRowController;
+
     private final Lazy<ActivityNotificationFilterBinding> lazyBinding = LazyKt.lazy(() -> ActivityNotificationFilterBinding.inflate(getLayoutInflater()));
 
     @NonNull
@@ -135,9 +137,12 @@ public class NotificationFilterActivity extends BaseActivity<ActivityNotificatio
         setSupportActionBar(getBinding().toolbarLayout.toolbar);
         Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
+        setTitle(R.string.notification_sync_settings_title);
         SharedPreferences preferences = this.getSharedPreferences(prefKey, Context.MODE_PRIVATE);
 
         configureSwitch(preferences);
+        sodutoIconRowController = new SodutoNotificationFilterController(this, getBinding());
+        sodutoIconRowController.configure();
 
         ThreadHelper.execute(() -> {
             PackageManager packageManager = getPackageManager();

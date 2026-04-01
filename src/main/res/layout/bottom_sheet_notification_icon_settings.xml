@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!--
+SPDX-FileCopyrightText: 2026 Sannidhya Roy <sannidhya@thenoton.com>
+
+SPDX-License-Identifier: GPL-2.0-only OR GPL-3.0-only OR LicenseRef-KDE-Accepted-GPL
+-->
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:paddingBottom="16dp">
+
+    <com.google.android.material.bottomsheet.BottomSheetDragHandleView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingLeft="24dp"
+        android:paddingRight="24dp"
+        android:paddingBottom="4dp"
+        android:text="@string/notification_icon_section_title"
+        android:textAppearance="?attr/textAppearanceTitleLarge" />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingLeft="24dp"
+        android:paddingRight="24dp"
+        android:paddingBottom="8dp"
+        android:text="@string/notification_icon_section_desc"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:textColor="?attr/colorOnSurfaceVariant" />
+
+    <com.google.android.material.materialswitch.MaterialSwitch
+        android:id="@+id/smIconLarge"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingLeft="24dp"
+        android:paddingTop="4dp"
+        android:paddingRight="24dp"
+        android:paddingBottom="4dp"
+        android:text="@string/notification_icon_large" />
+
+    <com.google.android.material.materialswitch.MaterialSwitch
+        android:id="@+id/smIconLauncher"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingLeft="24dp"
+        android:paddingTop="4dp"
+        android:paddingRight="24dp"
+        android:paddingBottom="4dp"
+        android:text="@string/notification_icon_launcher" />
+
+    <com.google.android.material.materialswitch.MaterialSwitch
+        android:id="@+id/smIconSmall"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingLeft="24dp"
+        android:paddingTop="4dp"
+        android:paddingRight="24dp"
+        android:paddingBottom="4dp"
+        android:text="@string/notification_icon_small" />
+
+    <com.google.android.material.materialswitch.MaterialSwitch
+        android:id="@+id/smIconDeviceShape"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingLeft="24dp"
+        android:paddingTop="8dp"
+        android:paddingRight="24dp"
+        android:paddingBottom="16dp"
+        android:text="@string/notification_icon_device_shape" />
+
+</LinearLayout>

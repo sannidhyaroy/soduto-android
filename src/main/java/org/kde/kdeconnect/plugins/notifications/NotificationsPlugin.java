@@ -78,6 +78,8 @@ public class NotificationsPlugin extends Plugin implements NotificationReceiver.
 
     private Set<String> currentNotifications;
     private Map<String, String> notificationsIcons; // Here we will map every notification to it's icon(hash)
+    private final SharedPreferences.OnSharedPreferenceChangeListener iconPrefsListener =
+            (prefs, key) -> notificationsIcons.clear();
     private Map<String, RepliableNotification> pendingIntents;
     private MultiValuedMap<String, Notification.Action> actions;
     private boolean serviceReady;
@@ -126,6 +128,9 @@ public class NotificationsPlugin extends Plugin implements NotificationReceiver.
 
         appDatabase = AppDatabase.getInstance(context);
 
+        context.getSharedPreferences(SodutoNotificationsHelper.PREFS_ICON, Context.MODE_PRIVATE)
+                .registerOnSharedPreferenceChangeListener(iconPrefsListener);
+
         NotificationReceiver.RunCommand(context, service -> {
 
             service.addListener(NotificationsPlugin.this);
@@ -138,7 +143,8 @@ public class NotificationsPlugin extends Plugin implements NotificationReceiver.
 
     @Override
     public void onDestroy() {
-
+        context.getSharedPreferences(SodutoNotificationsHelper.PREFS_ICON, Context.MODE_PRIVATE)
+                .unregisterOnSharedPreferenceChangeListener(iconPrefsListener);
         NotificationReceiver.RunCommand(context, service -> service.removeListener(NotificationsPlugin.this));
     }
 
