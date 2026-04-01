@@ -313,6 +313,16 @@ patches:
       upstream_issue: null
       drop_when: null
 
+    - file: src/main/java/org/kde/kdeconnect/plugins/remotekeyboard/RemoteKeyboardService.java
+      intent: Replace deprecated KeyboardView/Keyboard/OnKeyboardActionListener with SodutoRemoteKeyboardView delegation
+      conflict_prone: false
+      resolution_strategy: >-
+        Field type and two method bodies changed (onCreateInputView, updateInputView).
+        If upstream refactors these methods, evaluate whether SodutoRemoteKeyboardView
+        still integrates correctly and update the call sites.
+      upstream_issue: null
+      drop_when: null
+
     - file: src/main/res/layout/widget_remotecommandplugin.xml
       intent: Replace KDE Connect icon with Soduto foreground in widget title bar; fix ImageView size
       conflict_prone: false
@@ -463,3 +473,12 @@ patches:
 
     - file: src/main/res/drawable-anydpi-v24/ic_notification.xml
       intent: Soduto notification icon as vector drawable (API 24+)
+
+    - file: src/main/java/org/kde/kdeconnect/plugins/remotekeyboard/SodutoRemoteKeyboardView.kt
+      intent: Material 3 control strip replacing the deprecated KeyboardView in the Remote Keyboard IME
+
+    - file: src/main/res/layout/soduto_remote_keyboard_input_view.xml
+      intent: Material 3 icon button strip layout for the Remote Keyboard IME control bar
+
+    - file: src/main/res/values/strings_soduto.xml
+      intent: Soduto-specific string additions isolated from upstream strings.xml to avoid rebase conflicts
