@@ -200,12 +200,15 @@ patches:
     - file: src/main/java/org/kde/kdeconnect/plugins/notifications/NotificationsPlugin.java
       intent: >-
         Dynamic package name check to avoid forwarding our own notifications;
-        delegate extractIcon to SodutoNotificationsHelper for improved icon hierarchy
+        delegate extractIcon to SodutoNotificationsHelper for improved icon hierarchy;
+        register SharedPreferences listener on PREFS_ICON to clear notificationsIcons
+        cache when icon settings change so icons are re-sent after user adjustments
       conflict_prone: false
       resolution_strategy: >-
-        Two independent one-line changes. If upstream rewrites extractIcon, evaluate
-        whether SodutoNotificationsHelper is still needed and drop it if equivalent.
-        Keep the package name check regardless.
+        Three independent changes. Package name check and listener registration are
+        always kept. The extractIcon delegation can be dropped if upstream provides
+        an equivalent hierarchy — but the listener stays regardless because it is
+        tied to notificationsIcons cache invalidation, not to extractIcon itself.
       upstream_issue: null
       drop_when: Upstream fixes the hardcoded package name check and improves extractIcon
 
@@ -310,6 +313,35 @@ patches:
       intent: Change Easter Egg background to Soduto green and icon to ic_launcher_foreground
       conflict_prone: false
       resolution_strategy: Keep ours. Always take our version on conflict.
+      upstream_issue: null
+      drop_when: null
+
+    - file: src/main/java/org/kde/kdeconnect/plugins/notifications/NotificationFilterActivity.java
+      intent: >-
+        Add notification sync settings title; instantiate SodutoNotificationFilterController
+        to own the notification icon two-target row and bottom sheet without bloating
+        the upstream file
+      conflict_prone: true
+      resolution_strategy: >-
+        Upstream has a TODO to convert this to a PluginSettingsFragment — if that
+        happens, migrate our two call-site lines (controller instantiation + configure)
+        into the replacement class. The controller itself lives in our file and needs
+        no changes unless the binding type changes.
+      upstream_issue: null
+      drop_when: null
+
+    - file: src/main/res/layout/activity_notification_filter.xml
+      intent: >-
+        Add notification icon two-target row (master toggle + tap-to-configure) above
+        the app filter list; replace plain TextView with MaterialTextView for filter
+        description; add Notification Filter section header and divider; replace
+        ProgressBar with Material 3 Expressive LoadingIndicator
+      conflict_prone: true
+      resolution_strategy: >-
+        Our additions are a self-contained block at the top of the LinearLayout and a
+        section header above the existing tFilter view. If upstream restructures the
+        layout, reapply our block before smScreenOffNotification and our section header
+        above tFilter. The tFilter id and smScreenOffNotification id must remain intact.
       upstream_issue: null
       drop_when: null
 
@@ -433,7 +465,18 @@ patches:
 
   added:
     - file: src/main/java/org/kde/kdeconnect/plugins/notifications/SodutoNotificationsHelper.kt
-      intent: New downstream helper for improved notification icon extraction — 3-level hierarchy with launcher icon fallback and adaptive icon compositing toggle
+      intent: >-
+        Notification icon extraction helper — 3-level hierarchy (large, launcher, small)
+        with runtime SharedPreferences controlling which levels are active, master
+        on/off toggle, and adaptive icon compositing mode (layered vs device shape)
+
+    - file: src/main/java/org/kde/kdeconnect/plugins/notifications/SodutoNotificationFilterController.kt
+      intent: >-
+        Owns all notification icon row UI logic (two-target row, bottom sheet, master/child
+        toggle sync) extracted from NotificationFilterActivity to minimise upstream file changes
+
+    - file: src/main/res/layout/bottom_sheet_notification_icon_settings.xml
+      intent: Bottom sheet layout for configuring notification icon hierarchy levels and rendering style
 
     - file: src/main/res/xml-v31/remotecommandplugin_widget.xml
       intent: API 31+ variant of widget provider — adds previewLayout for live widget picker preview and targetCellWidth/Height for default grid size
