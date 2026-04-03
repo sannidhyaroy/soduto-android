@@ -293,12 +293,15 @@ patches:
       drop_when: Upstream fixes the inverted canAccessLogs() logic
 
     - file: src/main/AndroidManifest.xml
-      intent: Change app label to @string/app_name and SendFileActivity label to @string/app_name
+      intent: >-
+        Change app label to @string/app_name and SendFileActivity label to @string/app_name;
+        register KdeConnectDeviceAdminReceiver for LockReceiverPlugin
       conflict_prone: true
       resolution_strategy: >-
         Upstream frequently touches the manifest. Our changes are two label attributes
-        on <application> and SendFileActivity. On conflict, keep our label values and
-        accept upstream's other manifest changes.
+        on <application> and SendFileActivity, plus the DeviceAdminReceiver block.
+        On conflict, keep our label values and DeviceAdminReceiver registration,
+        and accept upstream's other manifest changes.
       upstream_issue: null
       drop_when: null
 
@@ -306,7 +309,8 @@ patches:
       intent: >-
         Add app_name="Soduto" (untranslatable); override kde_connect and all
         user-visible KDE Connect references to Soduto; capitalize plugin display
-        names for consistency; add pref_plugin_systemvolumeprovider strings
+        names for consistency; add pref_plugin_systemvolumeprovider, lock, and
+        lockreceiver strings; reformat battery status strings
       conflict_prone: true
       resolution_strategy: >-
         Upstream adds strings here frequently. Accept new upstream strings, but keep
@@ -375,6 +379,18 @@ patches:
       intent: Change Easter Egg background to Soduto green and icon to ic_launcher_foreground
       conflict_prone: false
       resolution_strategy: Keep ours. Always take our version on conflict.
+      upstream_issue: null
+      drop_when: null
+
+    - file: src/main/java/org/kde/kdeconnect/ui/DeviceFragment.kt
+      intent: >-
+        Display remote lock state in device screen subtitle ("Locked" or
+        "Locked · Battery X%") by reading LockPlugin.remoteIsLocked
+      conflict_prone: true
+      resolution_strategy: >-
+        Upstream actively develops DeviceFragment. Our change is confined to
+        displayBatteryInfoIfPossible(). On conflict, reapply the lockPlugin
+        lookup and subtitle composition logic in that function.
       upstream_issue: null
       drop_when: null
 
@@ -585,6 +601,28 @@ patches:
 
     - file: src/main/res/layout/soduto_remote_keyboard_input_view.xml
       intent: Material 3 icon button strip layout for the Remote Keyboard IME control bar
+
+    - file: src/main/java/org/kde/kdeconnect/plugins/lock/LockPlugin.kt
+      intent: >-
+        New plugin to read and control remote device lock state; sends requestLocked
+        on connect, exposes remoteIsLocked, provides Lock/Unlock menu actions
+
+    - file: src/main/java/org/kde/kdeconnect/plugins/lockreceiver/LockReceiverPlugin.kt
+      intent: >-
+        New plugin to handle remote lock commands on Android; reports lock state
+        changes via screen-off/user-present broadcasts; executes lockNow() via
+        DevicePolicyManager when Device Admin is active
+
+    - file: src/main/java/org/kde/kdeconnect/plugins/lockreceiver/KdeConnectDeviceAdminReceiver.kt
+      intent: DeviceAdminReceiver component required for LockReceiverPlugin to call lockNow()
+
+    - file: src/main/java/org/kde/kdeconnect/plugins/lockreceiver/DeviceAdminAlertDialogFragment.kt
+      intent: >-
+        Dialog shown in "needs permissions" section explaining Device Admin requirement;
+        positive button launches ACTION_ADD_DEVICE_ADMIN
+
+    - file: src/main/res/xml/device_admin.xml
+      intent: Device admin policy declaring force-lock capability for LockReceiverPlugin
 
     - file: src/main/java/org/kde/kdeconnect/plugins/systemvolumeprovider/AndroidSinksProvider.kt
       intent: >-
