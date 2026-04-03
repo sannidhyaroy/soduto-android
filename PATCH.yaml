@@ -212,6 +212,31 @@ patches:
       upstream_issue: null
       drop_when: Upstream fixes the hardcoded package name check and improves extractIcon
 
+    - file: src/main/java/org/kde/kdeconnect/plugins/mprisreceiver/MprisReceiverPlayer.kt
+      intent: >-
+        Add seek(), getShuffle()/setShuffle(), getLoopStatus()/setLoopStatus() via
+        MediaControllerCompat; expose shuffle and loopStatus state to the plugin
+      conflict_prone: false
+      resolution_strategy: >-
+        Keep ours. If upstream adds similar capabilities, evaluate whether our
+        MediaControllerCompat bridge is still needed or can be dropped.
+      upstream_issue: null
+      drop_when: Upstream adds seek/shuffle/loop support natively
+
+    - file: src/main/java/org/kde/kdeconnect/plugins/mprisreceiver/MprisReceiverPlugin.java
+      intent: >-
+        Handle Seek, setShuffle, setLoopStatus incoming packets; include shuffle and
+        loopStatus in outgoing metadata; register ContentObserver on
+        Settings.System.CONTENT_URI to push metadata updates on stream volume changes
+      conflict_prone: true
+      resolution_strategy: >-
+        Upstream actively develops this file. Our additions are in three
+        independent areas: packet handling (onPacketReceived), metadata sending
+        (sendMetadata), and volume tracking (onCreate/onDestroy). On conflict,
+        reapply each block independently.
+      upstream_issue: null
+      drop_when: Upstream adds seek/shuffle/loop/volume-change support natively
+
     - file: src/main/java/org/kde/kdeconnect/plugins/mpris/MprisMediaSession.kt
       intent: Use BuildConfig.APPLICATION_ID for MediaSession tag instead of hardcoded package name
       conflict_prone: false
