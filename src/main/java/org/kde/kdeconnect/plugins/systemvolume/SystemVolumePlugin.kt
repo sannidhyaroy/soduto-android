@@ -29,6 +29,13 @@ class SystemVolumePlugin : Plugin() {
     override val description: String
         get() = context.resources.getString(R.string.pref_plugin_systemvolume_desc)
 
+    override fun onCreate(): Boolean {
+        val np = NetworkPacket(PACKET_TYPE_SYSTEMVOLUME_REQUEST)
+        np["requestSinks"] = true
+        device.sendPacket(np)
+        return true
+    }
+
     override fun onPacketReceived(np: NetworkPacket): Boolean {
         if ("sinkList" in np) {
             sinkMap.clear()
