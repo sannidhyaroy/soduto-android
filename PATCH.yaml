@@ -552,3 +552,6 @@ patches:
 
     - file: src/main/res/values/strings_soduto.xml
       intent: Soduto-specific string additions isolated from upstream strings.xml to avoid rebase conflicts
+
+    - file: protocol.md
+      intent: KDE Connect protocol reference (generated from JSON Schemas) for use during plugin development
