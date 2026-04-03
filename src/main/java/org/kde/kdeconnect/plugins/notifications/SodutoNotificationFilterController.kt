@@ -34,10 +34,12 @@ internal class SodutoNotificationFilterController(
 
     fun configure() {
         val prefs = activity.getSharedPreferences(SodutoNotificationsHelper.PREFS_ICON, Context.MODE_PRIVATE)
+        binding.iconRow.rowTitle.setText(R.string.notification_icon_section_title)
+        binding.iconRow.rowSubtitle.setText(R.string.notification_icon_row_subtitle)
         val initialEnabled = prefs.getBoolean(SodutoNotificationsHelper.PREF_ICON_ENABLED, true)
-        binding.smIconsEnabled.isChecked = initialEnabled
+        binding.iconRow.rowSwitch.isChecked = initialEnabled
         setIconRowDividerColor(initialEnabled)
-        binding.smIconsEnabled.setOnCheckedChangeListener { _, isChecked ->
+        binding.iconRow.rowSwitch.setOnCheckedChangeListener { _, isChecked ->
             prefs.edit().putBoolean(SodutoNotificationsHelper.PREF_ICON_ENABLED, isChecked).apply()
             setIconRowDividerColor(isChecked)
             if (!syncingMaster) {
@@ -52,7 +54,7 @@ internal class SodutoNotificationFilterController(
                 sheetIconSmall?.isChecked = isChecked
             }
         }
-        binding.iconSettingsTitleArea.setOnClickListener { showIconSettingsBottomSheet() }
+        binding.iconRow.rowLabelArea.setOnClickListener { showIconSettingsBottomSheet() }
     }
 
     private fun setIconRowDividerColor(enabled: Boolean) {
@@ -62,7 +64,7 @@ internal class SodutoNotificationFilterController(
             else com.google.android.material.R.attr.colorOutlineVariant,
             tv, true
         )
-        binding.iconRowDivider.setBackgroundColor(tv.data)
+        binding.iconRow.rowDivider.setBackgroundColor(tv.data)
     }
 
     private fun showIconSettingsBottomSheet() {
@@ -111,10 +113,10 @@ internal class SodutoNotificationFilterController(
         val anyEnabled = prefs.getBoolean(SodutoNotificationsHelper.PREF_ICON_LARGE, true)
                 || prefs.getBoolean(SodutoNotificationsHelper.PREF_ICON_LAUNCHER, true)
                 || prefs.getBoolean(SodutoNotificationsHelper.PREF_ICON_SMALL, true)
-        val masterCurrently = binding.smIconsEnabled.isChecked
+        val masterCurrently = binding.iconRow.rowSwitch.isChecked
         if (anyEnabled == masterCurrently) return
         syncingMaster = true
-        binding.smIconsEnabled.isChecked = anyEnabled
+        binding.iconRow.rowSwitch.isChecked = anyEnabled
         syncingMaster = false
         prefs.edit().putBoolean(SodutoNotificationsHelper.PREF_ICON_ENABLED, anyEnabled).apply()
     }
