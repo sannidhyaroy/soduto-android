@@ -212,6 +212,13 @@ patches:
       upstream_issue: null
       drop_when: Upstream fixes the hardcoded package name check and improves extractIcon
 
+    - file: src/main/java/org/kde/kdeconnect/plugins/systemvolume/SystemVolumePlugin.kt
+      intent: Request sink list from desktop on connect so the UI populates immediately
+      conflict_prone: false
+      resolution_strategy: Keep ours. If upstream adds onCreate(), merge our requestSinks packet send into it.
+      upstream_issue: null
+      drop_when: Upstream adds the requestSinks call on connect
+
     - file: src/main/java/org/kde/kdeconnect/plugins/mprisreceiver/MprisReceiverPlayer.kt
       intent: >-
         Add seek(), getShuffle()/setShuffle(), getLoopStatus()/setLoopStatus() via
