@@ -446,8 +446,12 @@ SPDX-License-Identifier: GPL-2.0-only OR GPL-3.0-only OR LicenseRef-KDE-Accepted
     <string name="pref_plugin_systemvolumeprovider_desc">Access and control your device\'s volume from other devices</string>
     <string name="pref_plugin_lock">Remote Lock</string>
     <string name="pref_plugin_lock_desc">Lock and check the lock status of connected devices</string>
+    <string name="pref_plugin_lockreceiver">Device Lock</string>
+    <string name="pref_plugin_lockreceiver_desc">Allow connected devices to lock this device</string>
     <string name="lock_plugin_action_lock">Lock</string>
     <string name="lock_plugin_action_unlock">Unlock</string>
+    <string name="lockreceiver_device_admin_grant">Enable Device Admin</string>
+    <string name="lockreceiver_device_admin_permission_explanation">To allow connected devices to lock this device you need to grant Device Admin</string>
     <string name="mute">Mute</string>
     <string name="all">All</string>
 
