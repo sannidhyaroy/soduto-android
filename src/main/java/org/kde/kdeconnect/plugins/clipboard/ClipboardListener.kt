@@ -36,6 +36,7 @@ class ClipboardListener {
         private set
 
     private lateinit var cm: ClipboardManager
+    @Volatile private var logcatMonitoringStarted = false
 
     private constructor(ctx: Context) {
         context = ctx.applicationContext
@@ -43,20 +44,27 @@ class ClipboardListener {
             cm = ContextCompat.getSystemService<ClipboardManager>(context, ClipboardManager::class.java)!!
             cm.addPrimaryClipChangedListener { this.onClipboardChanged() }
         }
-        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.P && ContextCompat.checkSelfPermission(context, Manifest.permission.READ_LOGS) == PackageManager.PERMISSION_GRANTED) {
-            execute {
-                try {
-                    val timeStamp = SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS", Locale.US).format(Date())
-                    // Listen only ClipboardService errors after now
-                    val logcatFilter = if (Build.VERSION.SDK_INT > Build.VERSION_CODES.VANILLA_ICE_CREAM) { "E ClipboardService" } else { "ClipboardService:E" }
-                    val process = Runtime.getRuntime().exec(arrayOf<String>("logcat", "-T", timeStamp, logcatFilter, "*:S"))
-                    val bufferedReader = BufferedReader(InputStreamReader(process.inputStream))
-                    bufferedReader.forEachLine { line ->
-                        if (line.contains(BuildConfig.APPLICATION_ID)) {
-                            context.startActivity(ClipboardFloatingActivity.getIntent(context, false))
-                        }
+        startLogcatMonitoringIfNeeded()
+    }
+
+    fun startLogcatMonitoringIfNeeded() {
+        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.P) return
+        if (logcatMonitoringStarted) return
+        if (ContextCompat.checkSelfPermission(context, Manifest.permission.READ_LOGS) != PackageManager.PERMISSION_GRANTED) return
+        logcatMonitoringStarted = true
+        execute {
+            try {
+                val timeStamp = SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS", Locale.US).format(Date())
+                // Listen only ClipboardService errors after now
+                val process = Runtime.getRuntime().exec(arrayOf<String>("logcat", "-T", timeStamp, "ClipboardService:E", "*:S"))
+                val bufferedReader = BufferedReader(InputStreamReader(process.inputStream))
+                bufferedReader.forEachLine { line ->
+                    if (line.contains(BuildConfig.APPLICATION_ID)) {
+                        context.startActivity(ClipboardFloatingActivity.getIntent(context, false))
                     }
-                } catch (_: Exception) { }
+                }
+            } catch (_: Exception) {
+                logcatMonitoringStarted = false
             }
         }
     }

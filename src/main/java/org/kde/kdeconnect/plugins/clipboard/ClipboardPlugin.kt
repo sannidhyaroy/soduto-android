@@ -74,7 +74,9 @@ class ClipboardPlugin : Plugin() {
 
 
     override fun onCreate(): Boolean {
-        ClipboardListener.instance(context).registerObserver(observer)
+        val listener = ClipboardListener.instance(context)
+        listener.startLogcatMonitoringIfNeeded()
+        listener.registerObserver(observer)
         sendConnectPacket()
         return true
     }
@@ -88,7 +90,7 @@ class ClipboardPlugin : Plugin() {
     override val outgoingPacketTypes: Array<String> = arrayOf(PACKET_TYPE_CLIPBOARD, PACKET_TYPE_CLIPBOARD_CONNECT)
 
     override fun getUiButtons(): List<PluginUiButton> {
-        return if (Build.VERSION.SDK_INT > Build.VERSION_CODES.P && canAccessLogs()) {
+        return if (Build.VERSION.SDK_INT > Build.VERSION_CODES.P && !hasReadLogsPermission()) {
             listOf(PluginUiButton(context.getString(R.string.send_clipboard), R.drawable.ic_baseline_content_paste_24) { _: Activity? ->
                 userInitiatedSendClipboard()
             })
@@ -98,7 +100,7 @@ class ClipboardPlugin : Plugin() {
     }
 
     override fun getUiMenuEntries(): List<PluginUiMenuEntry> {
-        return if (Build.VERSION.SDK_INT > Build.VERSION_CODES.P && !canAccessLogs()) {
+        return if (Build.VERSION.SDK_INT > Build.VERSION_CODES.P && hasReadLogsPermission()) {
             listOf(PluginUiMenuEntry(context.getString(R.string.send_clipboard)) { _: Activity? ->
                 userInitiatedSendClipboard()
             })
@@ -120,8 +122,8 @@ class ClipboardPlugin : Plugin() {
         }
     }
 
-    private fun canAccessLogs(): Boolean {
-        return ContextCompat.checkSelfPermission(context, Manifest.permission.READ_LOGS) == PackageManager.PERMISSION_DENIED
+    private fun hasReadLogsPermission(): Boolean {
+        return ContextCompat.checkSelfPermission(context, Manifest.permission.READ_LOGS) == PackageManager.PERMISSION_GRANTED
     }
 
     companion object {
