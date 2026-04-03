@@ -233,6 +233,33 @@ patches:
       upstream_issue: null
       drop_when: null
 
+    - file: src/main/java/org/kde/kdeconnect/plugins/clipboard/ClipboardListener.kt
+      intent: >-
+        Fix broken logcat filter syntax ("E ClipboardService" passed as a single
+        space-containing argument is invalid — always use "ClipboardService:E");
+        extract monitoring into startLogcatMonitoringIfNeeded() so it can be triggered
+        without restarting the app when READ_LOGS is granted mid-session
+      conflict_prone: true
+      resolution_strategy: >-
+        Keep our logcat filter fix and startLogcatMonitoringIfNeeded() extraction.
+        If upstream changes the monitoring logic or adds version checks, reapply
+        our filter fix and ensure startLogcatMonitoringIfNeeded() still integrates.
+      upstream_issue: null
+      drop_when: Upstream fixes the logcat filter syntax and adds a post-grant monitoring start
+
+    - file: src/main/java/org/kde/kdeconnect/plugins/clipboard/ClipboardPlugin.kt
+      intent: >-
+        Fix inverted canAccessLogs() logic (was returning true on PERMISSION_DENIED);
+        rename to hasReadLogsPermission() with correct PERMISSION_GRANTED semantics;
+        call startLogcatMonitoringIfNeeded() on device connect to pick up a
+        freshly granted READ_LOGS permission without restarting the app
+      conflict_prone: false
+      resolution_strategy: >-
+        Keep ours. If upstream modifies getUiButtons()/getUiMenuEntries(), reapply
+        our corrected hasReadLogsPermission() check with the correct polarity.
+      upstream_issue: null
+      drop_when: Upstream fixes the inverted canAccessLogs() logic
+
     - file: src/main/AndroidManifest.xml
       intent: Change app label to @string/app_name and SendFileActivity label to @string/app_name
       conflict_prone: true
