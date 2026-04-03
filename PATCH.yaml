@@ -303,7 +303,10 @@ patches:
       drop_when: null
 
     - file: src/main/res/values/strings.xml
-      intent: Add app_name="Soduto" (untranslatable), override kde_connect and all user-visible KDE Connect references to Soduto
+      intent: >-
+        Add app_name="Soduto" (untranslatable); override kde_connect and all
+        user-visible KDE Connect references to Soduto; capitalize plugin display
+        names for consistency; add pref_plugin_systemvolumeprovider strings
       conflict_prone: true
       resolution_strategy: >-
         Upstream adds strings here frequently. Accept new upstream strings, but keep
@@ -581,6 +584,33 @@ patches:
 
     - file: src/main/res/layout/soduto_remote_keyboard_input_view.xml
       intent: Material 3 icon button strip layout for the Remote Keyboard IME control bar
+
+    - file: src/main/java/org/kde/kdeconnect/plugins/systemvolumeprovider/AndroidSinksProvider.kt
+      intent: >-
+        Audio stream discovery, volume change tracking via ContentObserver, and
+        sink list / single-stream update packet building; per-stream enable/disable
+        and custom label support via SharedPreferences
+
+    - file: src/main/java/org/kde/kdeconnect/plugins/systemvolumeprovider/SystemVolumeProviderPlugin.kt
+      intent: >-
+        New plugin exposing Android audio streams to desktop via kdeconnect.systemvolume;
+        handles requestSinks, setVolume, and mute incoming packets
+
+    - file: src/main/java/org/kde/kdeconnect/plugins/systemvolumeprovider/SystemVolumeProviderSettingsFragment.kt
+      intent: >-
+        RecyclerView settings UI for managing per-stream enable/disable and custom
+        labels; uses shared list_item_two_target_toggle layout
+
+    - file: src/main/res/layout/fragment_system_volume_provider_settings.xml
+      intent: Root RecyclerView layout for the System Volume Provider settings fragment
+
+    - file: src/main/res/layout/item_stream_header.xml
+      intent: Section header row (colorPrimary label) for RecyclerView list groupings
+
+    - file: src/main/res/layout/list_item_two_target_toggle.xml
+      intent: >-
+        Generic two-target row layout (tappable label area + 1dp divider + MaterialSwitch);
+        shared by SystemVolumeProviderSettingsFragment and activity_notification_filter
 
     - file: src/main/res/values/strings_soduto.xml
       intent: Soduto-specific string additions isolated from upstream strings.xml to avoid rebase conflicts
