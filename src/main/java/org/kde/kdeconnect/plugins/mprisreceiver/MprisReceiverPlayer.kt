@@ -5,15 +5,24 @@
  */
 package org.kde.kdeconnect.plugins.mprisreceiver
 
+import android.content.Context
 import android.media.MediaMetadata
 import android.media.session.MediaController
 import android.media.session.PlaybackState
+import android.support.v4.media.session.MediaControllerCompat
+import android.support.v4.media.session.MediaSessionCompat
+import android.support.v4.media.session.PlaybackStateCompat
 import org.apache.commons.lang3.StringUtils
 
 internal class MprisReceiverPlayer(
     val controller: MediaController,
     val name: String?,
+    context: Context,
 ) {
+    private val compatController: MediaControllerCompat = MediaControllerCompat(
+        context,
+        MediaSessionCompat.Token.fromToken(controller.sessionToken)
+    )
 
     fun isPlaying(): Boolean {
         val state = controller.playbackState ?: return false
@@ -120,6 +129,39 @@ internal class MprisReceiverPlayer(
         }
         set(position) {
             controller.transportControls.seekTo(position)
+        }
+
+    fun seek(offsetUs: Long) {
+        val newPosition = (position + offsetUs / 1000).coerceAtLeast(0)
+        controller.transportControls.seekTo(newPosition)
+    }
+
+    fun setShuffle(shuffle: Boolean) {
+        compatController.transportControls.setShuffleMode(
+            if (shuffle) PlaybackStateCompat.SHUFFLE_MODE_ALL else PlaybackStateCompat.SHUFFLE_MODE_NONE
+        )
+    }
+
+    fun setLoopStatus(status: String) {
+        val repeatMode = when (status) {
+            "Track" -> PlaybackStateCompat.REPEAT_MODE_ONE
+            "Playlist" -> PlaybackStateCompat.REPEAT_MODE_ALL
+            else -> PlaybackStateCompat.REPEAT_MODE_NONE
+        }
+        compatController.transportControls.setRepeatMode(repeatMode)
+    }
+
+    val shuffle: Boolean
+        get() {
+            val mode = compatController.shuffleMode
+            return mode == PlaybackStateCompat.SHUFFLE_MODE_ALL || mode == PlaybackStateCompat.SHUFFLE_MODE_GROUP
+        }
+
+    val loopStatus: String
+        get() = when (compatController.repeatMode) {
+            PlaybackStateCompat.REPEAT_MODE_ONE -> "Track"
+            PlaybackStateCompat.REPEAT_MODE_ALL, PlaybackStateCompat.REPEAT_MODE_GROUP -> "Playlist"
+            else -> "None"
         }
 
     val length: Long

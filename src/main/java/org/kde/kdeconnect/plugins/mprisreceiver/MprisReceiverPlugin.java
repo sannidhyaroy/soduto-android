@@ -7,6 +7,8 @@
 package org.kde.kdeconnect.plugins.mprisreceiver;
 
 import android.content.ComponentName;
+import android.database.ContentObserver;
+import android.media.AudioManager;
 import android.media.session.MediaController;
 import android.media.session.MediaSessionManager;
 import android.os.Handler;
@@ -49,6 +51,8 @@ public class MprisReceiverPlugin extends Plugin {
     private HashMap<String, MprisReceiverCallback> playerCbs;
 
     private MediaSessionChangeListener mediaSessionChangeListener;
+    private ContentObserver streamVolumeObserver;
+    private int lastKnownStreamVolume = -1;
 
     public @NonNull String getDeviceId() {
         return device.getDeviceId();
@@ -76,6 +80,27 @@ public class MprisReceiverPlugin extends Plugin {
             Log.e(TAG, "Exception", e);
         }
 
+        AudioManager audioManager = ContextCompat.getSystemService(context, AudioManager.class);
+        if (audioManager != null) {
+            lastKnownStreamVolume = audioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
+            streamVolumeObserver = new ContentObserver(new Handler(Looper.getMainLooper())) {
+                @Override
+                public void onChange(boolean selfChange) {
+                    int current = audioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
+                    if (current == lastKnownStreamVolume) return;
+                    lastKnownStreamVolume = current;
+                    for (MprisReceiverPlayer player : new ArrayList<>(players.values())) {
+                        if (player.getController().getPlaybackInfo().getPlaybackType()
+                                == MediaController.PlaybackInfo.PLAYBACK_TYPE_LOCAL) {
+                            sendMetadata(player);
+                        }
+                    }
+                }
+            };
+            context.getContentResolver().registerContentObserver(
+                    Settings.System.CONTENT_URI, true, streamVolumeObserver);
+        }
+
         return true;
     }
 
@@ -86,6 +111,10 @@ public class MprisReceiverPlugin extends Plugin {
         if (manager != null && mediaSessionChangeListener != null) {
             manager.removeOnActiveSessionsChangedListener(mediaSessionChangeListener);
             mediaSessionChangeListener = null;
+        }
+        if (streamVolumeObserver != null) {
+            context.getContentResolver().unregisterContentObserver(streamVolumeObserver);
+            streamVolumeObserver = null;
         }
     }
 
@@ -141,6 +170,18 @@ public class MprisReceiverPlugin extends Plugin {
         if (np.has("SetPosition")) {
             long position = np.getLong("SetPosition", 0);
             player.setPosition(position);
+        }
+
+        if (np.has("Seek")) {
+            player.seek(np.getLong("Seek", 0));
+        }
+
+        if (np.has("setShuffle")) {
+            player.setShuffle(np.getBoolean("setShuffle"));
+        }
+
+        if (np.has("setLoopStatus")) {
+            player.setLoopStatus(np.getString("setLoopStatus", "None"));
         }
 
         if (np.has("setVolume")) {
@@ -214,7 +255,7 @@ public class MprisReceiverPlugin extends Plugin {
         // Skip the media session we created ourselves as KDE Connect
         if (controller.getPackageName().equals(context.getPackageName())) return;
 
-        MprisReceiverPlayer player = new MprisReceiverPlayer(controller, AppsHelper.appNameLookup(context, controller.getPackageName()));
+        MprisReceiverPlayer player = new MprisReceiverPlayer(controller, AppsHelper.appNameLookup(context, controller.getPackageName()), context);
         MprisReceiverCallback cb = new MprisReceiverCallback(this, player);
         controller.registerCallback(cb, new Handler(Looper.getMainLooper()));
         playerCbs.put(player.getName(), cb);
@@ -276,6 +317,8 @@ public class MprisReceiverPlugin extends Plugin {
         np.set("canGoPrevious", player.canGoPrevious());
         np.set("canGoNext", player.canGoNext());
         np.set("canSeek", player.canSeek());
+        np.set("shuffle", player.getShuffle());
+        np.set("loopStatus", player.getLoopStatus());
         np.set("volume", player.getVolume());
         String artUrl = "";
         MprisReceiverCallback cb = playerCbs.get(player.getName());
