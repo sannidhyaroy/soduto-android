@@ -394,16 +394,16 @@ patches:
 
     - file: src/main/res/layout/activity_notification_filter.xml
       intent: >-
-        Add notification icon two-target row (master toggle + tap-to-configure) above
-        the app filter list; replace plain TextView with MaterialTextView for filter
-        description; add Notification Filter section header and divider; replace
-        ProgressBar with Material 3 Expressive LoadingIndicator
+        Add notification icon two-target row (via shared list_item_two_target_toggle
+        include) above the app filter list; replace plain TextView with MaterialTextView
+        for filter description; add Notification Filter section header and divider;
+        replace ProgressBar with Material 3 Expressive LoadingIndicator
       conflict_prone: true
       resolution_strategy: >-
-        Our additions are a self-contained block at the top of the LinearLayout and a
+        Our addition is a single <include> at the top of the LinearLayout and a
         section header above the existing tFilter view. If upstream restructures the
-        layout, reapply our block before smScreenOffNotification and our section header
-        above tFilter. The tFilter id and smScreenOffNotification id must remain intact.
+        layout, reapply our include before smScreenOffNotification and our section
+        header above tFilter. The tFilter id and smScreenOffNotification id must remain intact.
       upstream_issue: null
       drop_when: null
 
@@ -534,8 +534,9 @@ patches:
 
     - file: src/main/java/org/kde/kdeconnect/plugins/notifications/SodutoNotificationFilterController.kt
       intent: >-
-        Owns all notification icon row UI logic (two-target row, bottom sheet, master/child
-        toggle sync) extracted from NotificationFilterActivity to minimise upstream file changes
+        Owns all notification icon row UI logic (two-target row via shared
+        list_item_two_target_toggle, bottom sheet, master/child toggle sync)
+        extracted from NotificationFilterActivity to minimise upstream file changes
 
     - file: src/main/res/layout/bottom_sheet_notification_icon_settings.xml
       intent: Bottom sheet layout for configuring notification icon hierarchy levels and rendering style
