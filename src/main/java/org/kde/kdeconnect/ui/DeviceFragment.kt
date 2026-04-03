@@ -52,6 +52,7 @@ import org.kde.kdeconnect.helpers.security.SslHelper
 import org.kde.kdeconnect.KdeConnect
 import org.kde.kdeconnect.PairingHandler
 import org.kde.kdeconnect.plugins.battery.BatteryPlugin
+import org.kde.kdeconnect.plugins.lock.LockPlugin
 import org.kde.kdeconnect.plugins.mpris.MprisPlugin
 import org.kde.kdeconnect.plugins.Plugin
 import org.kde.kdeconnect.plugins.presenter.PresenterPlugin
@@ -368,21 +369,25 @@ class DeviceFragment : BaseFragment<ActivityDeviceBinding>() {
      */
     private fun displayBatteryInfoIfPossible() {
         val batteryPlugin = device?.getPlugin(BatteryPlugin::class.java)
+        val lockPlugin = device?.getPlugin(LockPlugin::class.java)
+        val isLocked = lockPlugin?.remoteIsLocked == true
 
         val info = batteryPlugin?.remoteBatteryInfo
-        if (info != null) {
-
+        val subtitle = if (info != null) {
             @StringRes
             val resId = when {
                 info.isCharging -> R.string.battery_status_charging_format
                 BatteryPlugin.isLowBattery(info) -> R.string.battery_status_low_format
                 else -> R.string.battery_status_format
             }
-
-            mActivity?.supportActionBar?.subtitle = mActivity?.getString(resId, info.currentCharge)
+            val batteryText = mActivity?.getString(resId, info.currentCharge)
+            if (isLocked) mActivity?.getString(R.string.device_status_locked_battery, batteryText)
+            else batteryText
         } else {
-            mActivity?.supportActionBar?.subtitle = null
+            if (isLocked) mActivity?.getString(R.string.device_status_locked) else null
         }
+
+        mActivity?.supportActionBar?.subtitle = subtitle
     }
 
     @Composable

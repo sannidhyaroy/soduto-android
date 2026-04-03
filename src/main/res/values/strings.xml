@@ -178,9 +178,11 @@ SPDX-License-Identifier: GPL-2.0-only OR GPL-3.0-only OR LicenseRef-KDE-Accepted
     <string name="mouse_receiver_no_permissions">To receive touch inputs remotely you need to grant Accessibility permissions to fully control your device</string>
 
     <string name="view_status_title">Status</string>
-    <string name="battery_status_format">Battery: %d%%</string>
-    <string name="battery_status_low_format">Battery: %d%% Low Battery</string>
-    <string name="battery_status_charging_format">Battery: %d%% charging</string>
+    <string name="battery_status_format">%d%% Battery</string>
+    <string name="battery_status_low_format">%d%% Battery (Low)</string>
+    <string name="battery_status_charging_format">%d%% Battery (Charging)</string>
+    <string name="device_status_locked">Locked</string>
+    <string name="device_status_locked_battery">Locked · %s</string>
 
     <string name="category_connected_devices">Connected devices</string>
     <string name="category_not_paired_devices">Available devices</string>
@@ -442,6 +444,10 @@ SPDX-License-Identifier: GPL-2.0-only OR GPL-3.0-only OR LicenseRef-KDE-Accepted
     <string name="pref_plugin_systemvolume_desc">Control the system volume of the remote device</string>
     <string name="pref_plugin_systemvolumeprovider">Device Volume Provider</string>
     <string name="pref_plugin_systemvolumeprovider_desc">Access and control your device\'s volume from other devices</string>
+    <string name="pref_plugin_lock">Remote Lock</string>
+    <string name="pref_plugin_lock_desc">Lock and check the lock status of connected devices</string>
+    <string name="lock_plugin_action_lock">Lock</string>
+    <string name="lock_plugin_action_unlock">Unlock</string>
     <string name="mute">Mute</string>
     <string name="all">All</string>
 
