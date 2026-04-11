@@ -656,3 +656,6 @@ patches:
 
     - file: protocol.md
       intent: KDE Connect protocol reference (generated from JSON Schemas) for use during plugin development
+
+    - file: protocol-extensions.md
+      intent: Soduto protocol extensions (canLock/canUnlock, canShuffle/canLoop, identity metadata, mousepad gestures) separate from the base KDE Connect protocol reference
