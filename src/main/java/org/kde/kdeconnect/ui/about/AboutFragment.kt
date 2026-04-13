@@ -20,6 +20,7 @@ import org.kde.kdeconnect.ui.list.ListAdapter
 import org.kde.kdeconnect.base.BaseFragment
 import org.kde.kdeconnect.extensions.getParcelableCompat
 import org.kde.kdeconnect.extensions.setupBottomPadding
+import org.kde.kdeconnect_tp.BuildConfig
 import org.kde.kdeconnect_tp.R
 import org.kde.kdeconnect_tp.databinding.FragmentAboutBinding
 
@@ -72,6 +73,7 @@ class AboutFragment : BaseFragment<FragmentAboutBinding>() {
         binding.appName.text = aboutData.name
         binding.appIcon.setImageDrawable(context?.let { ContextCompat.getDrawable(it, aboutData.icon) })
         binding.appVersion.text = context?.getString(R.string.version, aboutData.versionName)
+        binding.appKdeVersion.text = getString(R.string.based_on_kde_connect, BuildConfig.KDE_VERSION)
 
         // Setup Easter Egg onClickListener
 

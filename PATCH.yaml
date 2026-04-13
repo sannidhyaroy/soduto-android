@@ -163,13 +163,17 @@ patches:
       drop_when: null
 
     - file: build.gradle.kts
-      intent: Override applicationId to com.thenoton.soduto
+      intent: >-
+        Override applicationId to com.thenoton.soduto; introduce independent Soduto
+        versioning (sodutoVersion/sodutoVersionCode/kdeVersion variables defined above
+        android {}); expose KDE_VERSION as a BuildConfig field for the About screen.
       conflict_prone: false
       resolution_strategy: >-
-        One line changed in defaultConfig: applicationId = "com.thenoton.soduto".
-        Upstream rarely touches applicationId specifically (only versionCode/versionName
-        change frequently in defaultConfig, on separate lines). If a conflict occurs,
-        keep our applicationId value and accept upstream's other defaultConfig changes.
+        Keep applicationId = "com.thenoton.soduto". versionCode and versionName now
+        reference our sodutoVersion/sodutoVersionCode variables instead of literals, so
+        upstream versionCode/versionName bumps no longer conflict with those lines.
+        Update kdeVersion string when rebasing onto a new upstream release. The
+        buildConfigField("String", "KDE_VERSION", ...) line is Soduto-only; keep it.
       upstream_issue: null
       drop_when: null
 
@@ -441,9 +445,27 @@ patches:
       drop_when: null
 
     - file: src/main/res/layout/fragment_about.xml
-      intent: Use ShapeableImageView with rounded corners for About page icon; fix vertical alignment and icon/text spacing
+      intent: >-
+        Use ShapeableImageView with rounded corners for About page icon; fix vertical
+        alignment and icon/text spacing; add app_kde_version TextView below app_version
+        to display the upstream KDE Connect base version.
       conflict_prone: false
-      resolution_strategy: Keep ours. If upstream changes this layout, reapply our ShapeableImageView changes.
+      resolution_strategy: >-
+        Keep ours. If upstream changes this layout, reapply our ShapeableImageView
+        changes and app_kde_version TextView.
+      upstream_issue: null
+      drop_when: null
+
+    - file: src/main/java/org/kde/kdeconnect/ui/about/AboutFragment.kt
+      intent: >-
+        Display upstream KDE Connect base version below the Soduto version on the About
+        screen, using the localised R.string.based_on_kde_connect format string with
+        BuildConfig.KDE_VERSION as the argument.
+      conflict_prone: false
+      resolution_strategy: >-
+        One import added (BuildConfig) and one line added in updateData() to set
+        binding.appKdeVersion.text via getString(R.string.based_on_kde_connect, ...).
+        If upstream changes AboutFragment, reapply these two additions.
       upstream_issue: null
       drop_when: null
 
@@ -652,7 +674,10 @@ patches:
         shared by SystemVolumeProviderSettingsFragment and activity_notification_filter
 
     - file: src/main/res/values/strings_soduto.xml
-      intent: Soduto-specific string additions isolated from upstream strings.xml to avoid rebase conflicts
+      intent: >-
+        Soduto-specific string additions isolated from upstream strings.xml to avoid
+        rebase conflicts. Includes: Remote Keyboard UI labels, SystemVolumeProvider
+        settings, notification sync settings, and About screen strings.
 
     - file: protocol.md
       intent: KDE Connect protocol reference (generated from JSON Schemas) for use during plugin development

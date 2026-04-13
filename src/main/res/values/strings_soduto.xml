@@ -10,6 +10,9 @@ SPDX-License-Identifier: GPL-2.0-only OR GPL-3.0-only OR LicenseRef-KDE-Accepted
     <string name="remotekeyboard_hide_keyboard">Hide keyboard</string>
     <string name="remotekeyboard_switch_keyboard">Switch keyboard</string>
 
+    <!-- About screen -->
+    <string name="based_on_kde_connect">Based on KDE Connect %1$s</string>
+
     <!-- System Volume Provider plugin -->
     <string name="systemvolumeprovider_category_standard">Standard Streams</string>
     <string name="systemvolumeprovider_category_additional">Additional Streams</string>

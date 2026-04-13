@@ -28,6 +28,16 @@ plugins {
 
 val licenseResDir = "$projectDir/build/dependency-license-res"
 
+// Soduto version (independent of upstream KDE Connect versioning)
+// Scheme: major × 10000 + minor × 100 + patch (e.g. 4.0.0 = 40000, 4.1.0 = 40100).
+// Coordinated with Soduto macOS at the major version level.
+val sodutoVersion = "4.0.0"
+val sodutoVersionCode = 40000
+
+// Upstream KDE Connect Android base this build tracks.
+// Update this when rebasing onto a new upstream release.
+val kdeVersion = "1.35.5"
+
 kotlin {
     compilerOptions {
         jvmTarget = JvmTarget.JVM_11
@@ -41,8 +51,9 @@ android {
         applicationId = "com.thenoton.soduto"
         minSdk = 23
         targetSdk = 35
-        versionCode = 13505
-        versionName = "1.35.5"
+        versionCode = sodutoVersionCode
+        versionName = sodutoVersion
+        buildConfigField("String", "KDE_VERSION", "\"$kdeVersion\"")
         proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
     }
     buildFeatures {
