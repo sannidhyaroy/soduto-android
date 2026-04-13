@@ -17,6 +17,12 @@ class LockPlugin : Plugin() {
     var remoteIsLocked: Boolean? = null
         private set
 
+    var remoteCanLock: Boolean? = null
+        private set
+
+    var remoteCanUnlock: Boolean? = null
+        private set
+
     override val displayName: String
         get() = context.getString(R.string.pref_plugin_lock)
 
@@ -32,6 +38,8 @@ class LockPlugin : Plugin() {
 
     override fun onPacketReceived(np: NetworkPacket): Boolean {
         remoteIsLocked = np.getBoolean("isLocked")
+        if (np.has("canLock")) remoteCanLock = np.getBoolean("canLock")
+        if (np.has("canUnlock")) remoteCanUnlock = np.getBoolean("canUnlock")
         device.onPluginsChanged()
         return true
     }
@@ -44,12 +52,16 @@ class LockPlugin : Plugin() {
 
     override fun getUiMenuEntries(): List<PluginUiMenuEntry> {
         val entries = mutableListOf<PluginUiMenuEntry>()
-        if (remoteIsLocked != true) {
+        // Show Lock only when the remote is not already locked AND it can be locked.
+        // canLock absent → capability unknown → show (existing behaviour per protocol spec).
+        if (remoteIsLocked != true && remoteCanLock != false) {
             entries.add(PluginUiMenuEntry(context.getString(R.string.lock_plugin_action_lock)) {
                 if (isDeviceInitialized) sendSetLocked(true)
             })
         }
-        if (remoteIsLocked != false) {
+        // Show Unlock only when the remote is not already unlocked AND it can be unlocked.
+        // Android (and most platforms) report canUnlock = false, so this entry is normally hidden.
+        if (remoteIsLocked != false && remoteCanUnlock != false) {
             entries.add(PluginUiMenuEntry(context.getString(R.string.lock_plugin_action_unlock)) {
                 if (isDeviceInitialized) sendSetLocked(false)
             })

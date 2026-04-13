@@ -63,8 +63,11 @@ class LockReceiverPlugin : Plugin() {
     }
 
     private fun sendLockState() {
+        val dpm = context.getSystemService(Context.DEVICE_POLICY_SERVICE) as DevicePolicyManager
         val np = NetworkPacket(PACKET_TYPE_LOCK)
         np["isLocked"] = keyguardManager.isDeviceLocked
+        np["canLock"] = dpm.isAdminActive(KdeConnectDeviceAdminReceiver.getComponentName(context))
+        np["canUnlock"] = false
         device.sendPacket(np)
     }
 
