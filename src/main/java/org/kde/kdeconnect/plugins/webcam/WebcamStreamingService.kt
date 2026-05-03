@@ -26,6 +26,7 @@ import android.media.MediaCodecList
 import android.media.MediaFormat
 import android.media.MediaRecorder
 import android.os.Build
+import android.os.Bundle
 import android.os.Handler
 import android.os.IBinder
 import android.os.Looper
@@ -148,10 +149,11 @@ class WebcamStreamingService : Service() {
             }
             Actions.STOP.name -> stopStreaming()
             Actions.CONTROL_CAMERA.name -> {
-                val camera = intent.getStringExtra(EXTRA_CAMERA)
-                val zoom   = if (intent.hasExtra(EXTRA_ZOOM)) intent.getFloatExtra(EXTRA_ZOOM, 1.0f) else null
-                val flash  = if (intent.hasExtra(EXTRA_FLASH)) intent.getBooleanExtra(EXTRA_FLASH, false) else null
-                applyCameraControl(camera, zoom, flash)
+                val camera         = intent.getStringExtra(EXTRA_CAMERA)
+                val zoom           = if (intent.hasExtra(EXTRA_ZOOM))            intent.getFloatExtra(EXTRA_ZOOM, 1.0f)           else null
+                val flash          = if (intent.hasExtra(EXTRA_FLASH))           intent.getBooleanExtra(EXTRA_FLASH, false)        else null
+                val requestKeyframe= if (intent.hasExtra(EXTRA_REQUEST_KEYFRAME)) intent.getBooleanExtra(EXTRA_REQUEST_KEYFRAME, false) else null
+                applyCameraControl(camera, zoom, flash, requestKeyframe)
             }
         }
         return super.onStartCommand(intent, flags, startId)
@@ -259,10 +261,17 @@ class WebcamStreamingService : Service() {
      * Zoom and flash changes update the repeating capture request in-place.
      */
     @SuppressLint("MissingPermission")
-    private fun applyCameraControl(camera: String?, zoom: Float?, flash: Boolean?) {
+    private fun applyCameraControl(camera: String?, zoom: Float?, flash: Boolean?, requestKeyframe: Boolean? = null) {
         if (stopRequested || encoderSurface == null) return
         serviceScope.launch {
             try {
+                if (requestKeyframe == true) {
+                    videoCodec?.setParameters(Bundle().apply {
+                        putInt(MediaCodec.PARAMETER_KEY_REQUEST_SYNC_FRAME, 0)
+                    })
+                    Log.d(TAG, "Keyframe requested by remote")
+                    if (camera == null && zoom == null && flash == null) return@launch
+                }
                 val cameraManager = getSystemService<CameraManager>()
                     ?: throw IllegalStateException("No CameraManager")
 
@@ -751,9 +760,10 @@ class WebcamStreamingService : Service() {
         const val EXTRA_FPS       = "fps"
         const val EXTRA_BITRATE   = "bitrate"
         const val EXTRA_CODEC     = "codec"
-        const val EXTRA_CAMERA    = "camera"
-        const val EXTRA_ZOOM      = "zoom"
-        const val EXTRA_FLASH     = "flash"
+        const val EXTRA_CAMERA           = "camera"
+        const val EXTRA_ZOOM             = "zoom"
+        const val EXTRA_FLASH            = "flash"
+        const val EXTRA_REQUEST_KEYFRAME = "requestKeyframe"
 
         const val NOTIFICATION_ID = 20241
 

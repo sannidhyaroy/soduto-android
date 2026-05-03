@@ -145,22 +145,25 @@ class WebcamPlugin : Plugin() {
     private fun handleCameraControl(np: NetworkPacket): Boolean {
         if (!isStreaming) return true   // ignore if not currently streaming
 
-        val hasCamera = np.has("camera")
-        val hasZoom = np.has("zoom")
-        val hasFlash = np.has("flash")
+        val hasCamera         = np.has("camera")
+        val hasZoom           = np.has("zoom")
+        val hasFlash          = np.has("flash")
+        val hasRequestKeyframe= np.has("requestKeyframe")
 
-        if (!hasCamera && !hasZoom && !hasFlash) return false
+        if (!hasCamera && !hasZoom && !hasFlash && !hasRequestKeyframe) return false
 
-        val camera = if (hasCamera) np.getString("camera") else null
-        val zoom = if (hasZoom) np.getDouble("zoom", 1.0).toFloat() else null
-        val flash = if (hasFlash) np.getBoolean("flash", false) else null
+        val camera          = if (hasCamera)          np.getString("camera")                  else null
+        val zoom            = if (hasZoom)            np.getDouble("zoom", 1.0).toFloat()      else null
+        val flash           = if (hasFlash)           np.getBoolean("flash", false)            else null
+        val requestKeyframe = if (hasRequestKeyframe) np.getBoolean("requestKeyframe", false)  else null
 
-        Log.i(TAG, "handleCameraControl: camera=$camera zoom=$zoom flash=$flash")
+        Log.i(TAG, "handleCameraControl: camera=$camera zoom=$zoom flash=$flash requestKeyframe=$requestKeyframe")
         Intent(context, WebcamStreamingService::class.java).also { intent ->
             intent.action = WebcamStreamingService.Actions.CONTROL_CAMERA.name
-            if (camera != null) intent.putExtra(WebcamStreamingService.EXTRA_CAMERA, camera)
-            if (zoom != null) intent.putExtra(WebcamStreamingService.EXTRA_ZOOM, zoom)
-            if (flash != null) intent.putExtra(WebcamStreamingService.EXTRA_FLASH, flash)
+            if (camera != null)          intent.putExtra(WebcamStreamingService.EXTRA_CAMERA, camera)
+            if (zoom != null)            intent.putExtra(WebcamStreamingService.EXTRA_ZOOM, zoom)
+            if (flash != null)           intent.putExtra(WebcamStreamingService.EXTRA_FLASH, flash)
+            if (requestKeyframe != null) intent.putExtra(WebcamStreamingService.EXTRA_REQUEST_KEYFRAME, requestKeyframe)
             context.startService(intent)
         }
         return true
