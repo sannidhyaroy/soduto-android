@@ -145,25 +145,28 @@ class WebcamPlugin : Plugin() {
     private fun handleCameraControl(np: NetworkPacket): Boolean {
         if (!isStreaming) return true   // ignore if not currently streaming
 
-        val hasCamera         = np.has("camera")
-        val hasZoom           = np.has("zoom")
-        val hasFlash          = np.has("flash")
-        val hasRequestKeyframe= np.has("requestKeyframe")
+        val hasCamera          = np.has("camera")
+        val hasZoom            = np.has("zoom")
+        val hasFlash           = np.has("flash")
+        val hasRequestKeyframe = np.has("requestKeyframe")
+        val hasFps             = np.has("fps")
 
-        if (!hasCamera && !hasZoom && !hasFlash && !hasRequestKeyframe) return false
+        if (!hasCamera && !hasZoom && !hasFlash && !hasRequestKeyframe && !hasFps) return false
 
         val camera          = if (hasCamera)          np.getString("camera")                  else null
         val zoom            = if (hasZoom)            np.getDouble("zoom", 1.0).toFloat()      else null
         val flash           = if (hasFlash)           np.getBoolean("flash", false)            else null
         val requestKeyframe = if (hasRequestKeyframe) np.getBoolean("requestKeyframe", false)  else null
+        val fps             = if (hasFps)             np.getInt("fps", 30)                     else null
 
-        Log.i(TAG, "handleCameraControl: camera=$camera zoom=$zoom flash=$flash requestKeyframe=$requestKeyframe")
+        Log.i(TAG, "handleCameraControl: camera=$camera zoom=$zoom flash=$flash requestKeyframe=$requestKeyframe fps=$fps")
         Intent(context, WebcamStreamingService::class.java).also { intent ->
             intent.action = WebcamStreamingService.Actions.CONTROL_CAMERA.name
             if (camera != null)          intent.putExtra(WebcamStreamingService.EXTRA_CAMERA, camera)
             if (zoom != null)            intent.putExtra(WebcamStreamingService.EXTRA_ZOOM, zoom)
             if (flash != null)           intent.putExtra(WebcamStreamingService.EXTRA_FLASH, flash)
             if (requestKeyframe != null) intent.putExtra(WebcamStreamingService.EXTRA_REQUEST_KEYFRAME, requestKeyframe)
+            if (fps != null)             intent.putExtra(WebcamStreamingService.EXTRA_FPS, fps)
             context.startService(intent)
         }
         return true
@@ -202,6 +205,7 @@ class WebcamPlugin : Plugin() {
         if (status.activeZoom != 1.0f) np["activeZoom"] = status.activeZoom.toDouble()
         if (status.flashAvailable) np["flashAvailable"] = true
         if (status.flashActive) np["flashActive"] = true
+        if (status.fps != null) np["fps"] = status.fps
         if (status.error != null) np["error"] = status.error
         device.sendPacket(np)
         Log.i(TAG, "sendStreamStatus: packet sent")

@@ -31,6 +31,7 @@ import android.os.Handler
 import android.os.IBinder
 import android.os.Looper
 import android.util.Log
+import android.util.Range
 import android.view.OrientationEventListener
 import androidx.annotation.RequiresPermission
 import androidx.core.app.NotificationCompat
@@ -87,8 +88,19 @@ class WebcamStreamingService : Service() {
     // Cached camera list for status updates
     private var cachedCameras: List<String> = emptyList()
 
+    // Stream parameters — persisted so the encoder can be rebuilt on FPS change
+    private var currentWidth: Int = 1280
+    private var currentHeight: Int = 720
+    private var currentFps: Int = 30
+    private var currentBitrate: Int = -1
+    private var currentCodecPref: String? = null
+    private var currentCodecName: String = "h265"
+
     /** Set to true before releaseResources() so encode loops exit cleanly. */
     @Volatile private var stopRequested = false
+
+    /** Set by applyCameraControl when an FPS change requires encoder restart. */
+    @Volatile private var encoderRestarting = false
 
     // ── Device orientation listener ───────────────────────────────────────────
 
@@ -149,11 +161,12 @@ class WebcamStreamingService : Service() {
             }
             Actions.STOP.name -> stopStreaming()
             Actions.CONTROL_CAMERA.name -> {
-                val camera         = intent.getStringExtra(EXTRA_CAMERA)
-                val zoom           = if (intent.hasExtra(EXTRA_ZOOM))            intent.getFloatExtra(EXTRA_ZOOM, 1.0f)           else null
-                val flash          = if (intent.hasExtra(EXTRA_FLASH))           intent.getBooleanExtra(EXTRA_FLASH, false)        else null
-                val requestKeyframe= if (intent.hasExtra(EXTRA_REQUEST_KEYFRAME)) intent.getBooleanExtra(EXTRA_REQUEST_KEYFRAME, false) else null
-                applyCameraControl(camera, zoom, flash, requestKeyframe)
+                val camera          = intent.getStringExtra(EXTRA_CAMERA)
+                val zoom            = if (intent.hasExtra(EXTRA_ZOOM))             intent.getFloatExtra(EXTRA_ZOOM, 1.0f)            else null
+                val flash           = if (intent.hasExtra(EXTRA_FLASH))            intent.getBooleanExtra(EXTRA_FLASH, false)         else null
+                val requestKeyframe = if (intent.hasExtra(EXTRA_REQUEST_KEYFRAME)) intent.getBooleanExtra(EXTRA_REQUEST_KEYFRAME, false) else null
+                val fps             = if (intent.hasExtra(EXTRA_FPS))              intent.getIntExtra(EXTRA_FPS, 30)                  else null
+                applyCameraControl(camera, zoom, flash, requestKeyframe, fps)
             }
         }
         return super.onStartCommand(intent, flags, startId)
@@ -186,6 +199,8 @@ class WebcamStreamingService : Service() {
 
             val (videoEncoder, codecName) = createVideoEncoder(width, height, fps, bitrate, codecPref)
             videoCodec = videoEncoder
+            currentWidth = width; currentHeight = height; currentFps = fps
+            currentBitrate = bitrate; currentCodecPref = codecPref; currentCodecName = codecName
             encoderSurface = videoEncoder.createInputSurface()
             videoEncoder.start()
 
@@ -235,6 +250,51 @@ class WebcamStreamingService : Service() {
             ))
 
             runVideoEncodeLoop(videoEncoder, frameSender)
+
+            // FPS-change restart loop — rebuilds encoder and camera session without
+            // stopping the service or sending streaming=false to the plugin.
+            while (encoderRestarting && !stopRequested) {
+                encoderRestarting = false
+                try {
+                    closeCamera()
+                    try { videoCodec?.stop(); videoCodec?.release() } catch (_: Exception) {}
+                    encoderSurface?.release()
+                    videoCodec = null; encoderSurface = null
+
+                    val cm = getSystemService<CameraManager>()
+                        ?: throw IllegalStateException("No CameraManager")
+                    val (newEncoder, newCodec) = createVideoEncoder(
+                        currentWidth, currentHeight, currentFps, currentBitrate, currentCodecPref)
+                    videoCodec = newEncoder
+                    currentCodecName = newCodec
+                    encoderSurface = newEncoder.createInputSurface()
+                    newEncoder.start()
+
+                    val cameraId = resolveCamera(cm, currentCamera)
+                    val chars = cm.getCameraCharacteristics(cameraId)
+                    currentCameraChars = chars
+                    sensorOrientation = chars.get(CameraCharacteristics.SENSOR_ORIENTATION) ?: 0
+                    currentCameraFacing = chars.get(CameraCharacteristics.LENS_FACING)
+                        ?: CameraCharacteristics.LENS_FACING_BACK
+                    flashAvailable = chars.get(CameraCharacteristics.FLASH_INFO_AVAILABLE) ?: false
+                    if (currentCameraFacing == CameraCharacteristics.LENS_FACING_BACK) {
+                        val (zr, oz) = queryZoomLevels(chars)
+                        zoomRangePair = zr; opticalZoomLevels = oz
+                    } else {
+                        zoomRangePair = null; opticalZoomLevels = emptyList()
+                    }
+                    cachedCameras = buildCameraList(cm)
+                    openCamera(cameraId, encoderSurface!!)
+
+                    Log.i(TAG, "Encoder restarted: fps=$currentFps codec=$currentCodecName")
+                    listener?.invoke(buildWebcamStreamStatus())
+                    runVideoEncodeLoop(videoCodec!!, frameSender)
+                } catch (e: Exception) {
+                    Log.e(TAG, "Encoder restart failed", e)
+                    break
+                }
+            }
+
             audioJob.cancel()
         } catch (e: Exception) {
             Log.e(TAG, "Streaming error", e)
@@ -261,7 +321,10 @@ class WebcamStreamingService : Service() {
      * Zoom and flash changes update the repeating capture request in-place.
      */
     @SuppressLint("MissingPermission")
-    private fun applyCameraControl(camera: String?, zoom: Float?, flash: Boolean?, requestKeyframe: Boolean? = null) {
+    private fun applyCameraControl(
+        camera: String?, zoom: Float?, flash: Boolean?,
+        requestKeyframe: Boolean? = null, fps: Int? = null
+    ) {
         if (stopRequested || encoderSurface == null) return
         serviceScope.launch {
             try {
@@ -270,7 +333,39 @@ class WebcamStreamingService : Service() {
                         putInt(MediaCodec.PARAMETER_KEY_REQUEST_SYNC_FRAME, 0)
                     })
                     Log.d(TAG, "Keyframe requested by remote")
-                    if (camera == null && zoom == null && flash == null) return@launch
+                    if (camera == null && zoom == null && flash == null && fps == null) return@launch
+                }
+
+                if (fps != null && fps != currentFps) {
+                    // Apply any co-requested camera change to current* state so the
+                    // restart loop picks it up when it rebuilds the session.
+                    if (camera != null && camera != currentCamera) {
+                        val cm = getSystemService<CameraManager>()
+                            ?: throw IllegalStateException("No CameraManager")
+                        val chars = cm.getCameraCharacteristics(resolveCamera(cm, camera))
+                        currentCameraChars = chars
+                        sensorOrientation = chars.get(CameraCharacteristics.SENSOR_ORIENTATION) ?: 0
+                        currentCameraFacing = chars.get(CameraCharacteristics.LENS_FACING)
+                            ?: CameraCharacteristics.LENS_FACING_BACK
+                        flashAvailable = chars.get(CameraCharacteristics.FLASH_INFO_AVAILABLE) ?: false
+                        flashActive = false
+                        currentCamera = camera
+                        currentZoom = zoom ?: 1.0f
+                        if (currentCameraFacing == CameraCharacteristics.LENS_FACING_BACK) {
+                            val (zr, oz) = queryZoomLevels(chars)
+                            zoomRangePair = zr; opticalZoomLevels = oz
+                        } else {
+                            zoomRangePair = null; opticalZoomLevels = emptyList()
+                        }
+                    } else {
+                        if (zoom != null) currentZoom = zoom.coerceIn(
+                            zoomRangePair?.first ?: 1.0f, zoomRangePair?.second ?: 1.0f)
+                    }
+                    if (flash != null) flashActive = flash && flashAvailable
+                    currentFps = fps
+                    encoderRestarting = true
+                    Log.i(TAG, "FPS change: $fps — encoder restart pending")
+                    return@launch
                 }
                 val cameraManager = getSystemService<CameraManager>()
                     ?: throw IllegalStateException("No CameraManager")
@@ -460,7 +555,7 @@ class WebcamStreamingService : Service() {
 
     private fun runVideoEncodeLoop(encoder: MediaCodec, frameSender: WebcamFrameSender) {
         val bufferInfo = MediaCodec.BufferInfo()
-        while (!stopRequested) {
+        while (!stopRequested && !encoderRestarting) {
             try {
                 val outputIndex = encoder.dequeueOutputBuffer(bufferInfo, DEQUEUE_TIMEOUT_US)
                 if (outputIndex < 0) continue
@@ -569,6 +664,7 @@ class WebcamStreamingService : Service() {
             val builder = device.createCaptureRequest(CameraDevice.TEMPLATE_RECORD).apply {
                 addTarget(surface)
                 set(CaptureRequest.CONTROL_AE_MODE, CaptureRequest.CONTROL_AE_MODE_ON)
+                set(CaptureRequest.CONTROL_AE_TARGET_FPS_RANGE, Range(currentFps, currentFps))
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
                     set(CaptureRequest.CONTROL_ZOOM_RATIO, currentZoom)
                 } else if (currentZoom > 1.0f) {
@@ -705,15 +801,17 @@ class WebcamStreamingService : Service() {
 
     /** Builds a WebcamStreamStatus reflecting the current streaming state. */
     private fun buildWebcamStreamStatus(rotation: Int = calculateStreamRotation()) = WebcamStreamStatus(
-        streaming     = true,
-        rotation      = rotation,
-        cameras       = cachedCameras,
-        activeCamera  = currentCamera,
-        zoomRange     = zoomRangePair,
-        opticalZooms  = opticalZoomLevels,
-        activeZoom    = currentZoom,
-        flashAvailable= flashAvailable,
-        flashActive   = flashActive
+        streaming      = true,
+        codec          = currentCodecName,
+        fps            = currentFps,
+        rotation       = rotation,
+        cameras        = cachedCameras,
+        activeCamera   = currentCamera,
+        zoomRange      = zoomRangePair,
+        opticalZooms   = opticalZoomLevels,
+        activeZoom     = currentZoom,
+        flashAvailable = flashAvailable,
+        flashActive    = flashActive
     )
 
     // ── Foreground notification ───────────────────────────────────────────────

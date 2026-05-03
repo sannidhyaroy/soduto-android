@@ -21,5 +21,6 @@ data class WebcamStreamStatus(
     val activeZoom:     Float   = 1.0f,
     val flashAvailable: Boolean = false,
     val flashActive:    Boolean = false,
+    val fps:            Int?    = null,
     val error:          String? = null
 )
