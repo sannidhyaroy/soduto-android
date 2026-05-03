@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!--
+SPDX-FileCopyrightText: 2026 Sannidhya Roy <sannidhya@thenoton.com>
+
+SPDX-License-Identifier: GPL-2.0-only OR GPL-3.0-only OR LicenseRef-KDE-Accepted-GPL
+-->
+
+<resources>
+    <string name="remotekeyboard_hide_keyboard">Masquer le clavier</string>
+    <string name="remotekeyboard_switch_keyboard">Changer de clavier</string>
+
+    <!-- About screen -->
+    <string name="based_on_kde_connect">Basé sur KDE Connect %1$s</string>
+
+    <!-- System Volume Provider plugin -->
+    <string name="systemvolumeprovider_category_standard">Flux standard</string>
+    <string name="systemvolumeprovider_category_additional">Flux supplémentaires</string>
+    <string name="systemvolumeprovider_custom_label">Nom du flux</string>
+    <string name="systemvolumeprovider_tap_to_customize">Appuyer pour personnaliser</string>
+
+    <!-- Webcam plugin -->
+    <string name="webcam_use_front_camera_key" translatable="false">webcam_use_front_camera</string>
+    <string name="pref_plugin_webcam">Webcam</string>
+    <string name="pref_plugin_webcam_desc">Diffuser la caméra et le microphone de votre téléphone comme webcam vers les appareils connectés</string>
+    <string name="webcam_permission_explanation">L\'accès à la caméra et au microphone est requis pour diffuser la vidéo</string>
+    <string name="webcam_stop_streaming">Arrêter la diffusion webcam</string>
+    <string name="notification_channel_webcam">Diffusion webcam</string>
+    <string name="webcam_notification_title">Webcam active</string>
+    <string name="webcam_notification_stop">Arrêter</string>
+    <string name="webcam_use_front_camera_title">Utiliser la caméra frontale</string>
+    <string name="webcam_use_front_camera_summary">Utiliser la caméra frontale par défaut au lieu de la caméra arrière</string>
+
+    <!-- Notification sync settings screen -->
+    <string name="notification_sync_settings_title">Paramètres de synchronisation des notifications</string>
+    <string name="notification_icon_section_title">Icônes de notification</string>
+    <string name="notification_icon_row_subtitle">Appuyer pour configurer les niveaux d\'icônes</string>
+    <string name="notification_icon_section_desc">Configurer comment les icônes d\'application sont choisies et affichées lors du transfert de notifications vers des appareils connectés (les niveaux activés sont essayés de haut en bas et le premier disponible est envoyé)</string>
+    <string name="notification_icon_large">Inclure la grande icône de notification Android (photo de contact, pochette d\'album, etc.)</string>
+    <string name="notification_icon_launcher">Inclure l\'icône de l\'application source</string>
+    <string name="notification_icon_small">Inclure l\'icône monochromatique de la barre d\'état</string>
+    <string name="notification_icon_device_shape">Adapter à la forme des icônes de l\'écran d\'accueil</string>
+    <string name="notification_filter_section_title">Filtre de notifications</string>
+    <string name="notification_filter_section_desc">Choisir quelles applications peuvent envoyer des notifications aux appareils connectés (appui long sur une application pour les options de confidentialité par application)</string>
+</resources>

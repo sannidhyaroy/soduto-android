@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!--
+SPDX-FileCopyrightText: 2026 Sannidhya Roy <sannidhya@thenoton.com>
+
+SPDX-License-Identifier: GPL-2.0-only OR GPL-3.0-only OR LicenseRef-KDE-Accepted-GPL
+-->
+
+<resources>
+    <string name="remotekeyboard_hide_keyboard">隐藏键盘</string>
+    <string name="remotekeyboard_switch_keyboard">切换键盘</string>
+
+    <!-- About screen -->
+    <string name="based_on_kde_connect">基于 KDE Connect %1$s</string>
+
+    <!-- System Volume Provider plugin -->
+    <string name="systemvolumeprovider_category_standard">标准音频流</string>
+    <string name="systemvolumeprovider_category_additional">附加音频流</string>
+    <string name="systemvolumeprovider_custom_label">流标签</string>
+    <string name="systemvolumeprovider_tap_to_customize">点击以自定义</string>
+
+    <!-- Webcam plugin -->
+    <string name="webcam_use_front_camera_key" translatable="false">webcam_use_front_camera</string>
+    <string name="pref_plugin_webcam">摄像头</string>
+    <string name="pref_plugin_webcam_desc">将手机摄像头和麦克风作为网络摄像头流式传输到已连接的设备</string>
+    <string name="webcam_permission_explanation">流式传输视频需要摄像头和麦克风权限</string>
+    <string name="webcam_stop_streaming">停止摄像头流式传输</string>
+    <string name="notification_channel_webcam">摄像头流式传输</string>
+    <string name="webcam_notification_title">摄像头已激活</string>
+    <string name="webcam_notification_stop">停止</string>
+    <string name="webcam_use_front_camera_title">使用前置摄像头</string>
+    <string name="webcam_use_front_camera_summary">默认使用前置摄像头而非后置摄像头</string>
+
+    <!-- Notification sync settings screen -->
+    <string name="notification_sync_settings_title">通知同步设置</string>
+    <string name="notification_icon_section_title">通知图标</string>
+    <string name="notification_icon_row_subtitle">点击以配置图标级别</string>
+    <string name="notification_icon_section_desc">配置向已连接设备转发通知时应用图标的选择和渲染方式（已启用的级别从上到下依次尝试，发送第一个可用的图标）</string>
+    <string name="notification_icon_large">包含 Android 大通知图标（联系人照片、专辑封面等）</string>
+    <string name="notification_icon_launcher">包含来源应用图标</string>
+    <string name="notification_icon_small">包含单色状态栏图标</string>
+    <string name="notification_icon_device_shape">匹配主屏幕图标形状</string>
+    <string name="notification_filter_section_title">通知过滤器</string>
+    <string name="notification_filter_section_desc">选择哪些应用可以向已连接设备发送通知（长按应用可设置每个应用的隐私选项）</string>
+</resources>

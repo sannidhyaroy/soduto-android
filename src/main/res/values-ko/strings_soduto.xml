@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!--
+SPDX-FileCopyrightText: 2026 Sannidhya Roy <sannidhya@thenoton.com>
+
+SPDX-License-Identifier: GPL-2.0-only OR GPL-3.0-only OR LicenseRef-KDE-Accepted-GPL
+-->
+
+<resources>
+    <string name="remotekeyboard_hide_keyboard">키보드 숨기기</string>
+    <string name="remotekeyboard_switch_keyboard">키보드 전환</string>
+
+    <!-- About screen -->
+    <string name="based_on_kde_connect">KDE Connect %1$s 기반</string>
+
+    <!-- System Volume Provider plugin -->
+    <string name="systemvolumeprovider_category_standard">기본 스트림</string>
+    <string name="systemvolumeprovider_category_additional">추가 스트림</string>
+    <string name="systemvolumeprovider_custom_label">스트림 레이블</string>
+    <string name="systemvolumeprovider_tap_to_customize">탭하여 사용자 지정</string>
+
+    <!-- Webcam plugin -->
+    <string name="webcam_use_front_camera_key" translatable="false">webcam_use_front_camera</string>
+    <string name="pref_plugin_webcam">웹캠</string>
+    <string name="pref_plugin_webcam_desc">휴대폰 카메라와 마이크를 웹캠으로 연결된 장치에 스트리밍</string>
+    <string name="webcam_permission_explanation">비디오를 스트리밍하려면 카메라 및 마이크 접근이 필요합니다</string>
+    <string name="webcam_stop_streaming">웹캠 스트리밍 중지</string>
+    <string name="notification_channel_webcam">웹캠 스트리밍</string>
+    <string name="webcam_notification_title">웹캠 활성</string>
+    <string name="webcam_notification_stop">중지</string>
+    <string name="webcam_use_front_camera_title">전면 카메라 사용</string>
+    <string name="webcam_use_front_camera_summary">후면 카메라 대신 전면 카메라를 기본으로 사용</string>
+
+    <!-- Notification sync settings screen -->
+    <string name="notification_sync_settings_title">알림 동기화 설정</string>
+    <string name="notification_icon_section_title">알림 아이콘</string>
+    <string name="notification_icon_row_subtitle">탭하여 아이콘 레벨 구성</string>
+    <string name="notification_icon_section_desc">연결된 장치로 알림을 전달할 때 앱 아이콘을 선택하고 표시하는 방법을 설정합니다 (활성화된 레벨은 위에서 아래 순서로 시도되며 첫 번째로 사용 가능한 항목이 전송됩니다)</string>
+    <string name="notification_icon_large">Android 큰 알림 아이콘 포함 (연락처 사진, 앨범 아트 등)</string>
+    <string name="notification_icon_launcher">소스 앱 아이콘 포함</string>
+    <string name="notification_icon_small">단색 상태 표시줄 아이콘 포함</string>
+    <string name="notification_icon_device_shape">홈 화면 아이콘 모양에 맞춤</string>
+    <string name="notification_filter_section_title">알림 필터</string>
+    <string name="notification_filter_section_desc">연결된 장치로 알림을 보낼 수 있는 앱을 선택합니다 (앱을 길게 누르면 앱별 개인 정보 옵션을 설정할 수 있습니다)</string>
+</resources>

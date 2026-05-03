@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!--
+SPDX-FileCopyrightText: 2026 Sannidhya Roy <sannidhya@thenoton.com>
+
+SPDX-License-Identifier: GPL-2.0-only OR GPL-3.0-only OR LicenseRef-KDE-Accepted-GPL
+-->
+
+<resources>
+    <string name="remotekeyboard_hide_keyboard">キーボードを非表示</string>
+    <string name="remotekeyboard_switch_keyboard">キーボードを切り替え</string>
+
+    <!-- About screen -->
+    <string name="based_on_kde_connect">KDE Connect %1$s をベースに開発</string>
+
+    <!-- System Volume Provider plugin -->
+    <string name="systemvolumeprovider_category_standard">標準ストリーム</string>
+    <string name="systemvolumeprovider_category_additional">追加ストリーム</string>
+    <string name="systemvolumeprovider_custom_label">ストリームのラベル</string>
+    <string name="systemvolumeprovider_tap_to_customize">タップしてカスタマイズ</string>
+
+    <!-- Webcam plugin -->
+    <string name="webcam_use_front_camera_key" translatable="false">webcam_use_front_camera</string>
+    <string name="pref_plugin_webcam">ウェブカム</string>
+    <string name="pref_plugin_webcam_desc">スマートフォンのカメラとマイクをウェブカムとして接続デバイスにストリーミング</string>
+    <string name="webcam_permission_explanation">ビデオをストリーミングするにはカメラとマイクへのアクセスが必要です</string>
+    <string name="webcam_stop_streaming">ウェブカムストリーミングを停止</string>
+    <string name="notification_channel_webcam">ウェブカムストリーミング</string>
+    <string name="webcam_notification_title">ウェブカム使用中</string>
+    <string name="webcam_notification_stop">停止</string>
+    <string name="webcam_use_front_camera_title">フロントカメラを使用</string>
+    <string name="webcam_use_front_camera_summary">リアカメラの代わりにフロントカメラをデフォルトとして使用する</string>
+
+    <!-- Notification sync settings screen -->
+    <string name="notification_sync_settings_title">通知同期の設定</string>
+    <string name="notification_icon_section_title">通知アイコン</string>
+    <string name="notification_icon_row_subtitle">タップしてアイコンレベルを設定</string>
+    <string name="notification_icon_section_desc">接続デバイスへ通知を転送する際のアプリアイコンの選択方法と表示方法を設定します（有効なレベルは上から順に試行され、最初に利用可能なものが送信されます）</string>
+    <string name="notification_icon_large">Android の大きな通知アイコンを含める（連絡先の写真、アルバムアートなど）</string>
+    <string name="notification_icon_launcher">通知元アプリのアイコンを含める</string>
+    <string name="notification_icon_small">モノクロのステータスバーアイコンを含める</string>
+    <string name="notification_icon_device_shape">ホーム画面のアイコン形状に合わせる</string>
+    <string name="notification_filter_section_title">通知フィルター</string>
+    <string name="notification_filter_section_desc">接続デバイスへ通知を送信できるアプリを選択します（アプリを長押しするとアプリごとのプライバシーオプションを設定できます）</string>
+</resources>

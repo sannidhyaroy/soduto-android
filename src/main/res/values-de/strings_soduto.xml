@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!--
+SPDX-FileCopyrightText: 2026 Sannidhya Roy <sannidhya@thenoton.com>
+
+SPDX-License-Identifier: GPL-2.0-only OR GPL-3.0-only OR LicenseRef-KDE-Accepted-GPL
+-->
+
+<resources>
+    <string name="remotekeyboard_hide_keyboard">Tastatur ausblenden</string>
+    <string name="remotekeyboard_switch_keyboard">Tastatur wechseln</string>
+
+    <!-- About screen -->
+    <string name="based_on_kde_connect">Basierend auf KDE Connect %1$s</string>
+
+    <!-- System Volume Provider plugin -->
+    <string name="systemvolumeprovider_category_standard">Standardstreams</string>
+    <string name="systemvolumeprovider_category_additional">Weitere Streams</string>
+    <string name="systemvolumeprovider_custom_label">Stream-Bezeichnung</string>
+    <string name="systemvolumeprovider_tap_to_customize">Zum Anpassen tippen</string>
+
+    <!-- Webcam plugin -->
+    <string name="webcam_use_front_camera_key" translatable="false">webcam_use_front_camera</string>
+    <string name="pref_plugin_webcam">Webcam</string>
+    <string name="pref_plugin_webcam_desc">Kamera und Mikrofon des Telefons als Webcam an verbundene Geräte streamen</string>
+    <string name="webcam_permission_explanation">Kamera- und Mikrofonzugriff ist erforderlich, um Video zu streamen</string>
+    <string name="webcam_stop_streaming">Webcam-Streaming stoppen</string>
+    <string name="notification_channel_webcam">Webcam-Streaming</string>
+    <string name="webcam_notification_title">Webcam aktiv</string>
+    <string name="webcam_notification_stop">Stoppen</string>
+    <string name="webcam_use_front_camera_title">Frontkamera verwenden</string>
+    <string name="webcam_use_front_camera_summary">Frontkamera standardmäßig statt der Rückkamera verwenden</string>
+
+    <!-- Notification sync settings screen -->
+    <string name="notification_sync_settings_title">Einstellungen zur Benachrichtigungssynchronisierung</string>
+    <string name="notification_icon_section_title">Benachrichtigungssymbole</string>
+    <string name="notification_icon_row_subtitle">Tippen, um Symbolebenen zu konfigurieren</string>
+    <string name="notification_icon_section_desc">Festlegen, wie App-Symbole beim Weiterleiten von Benachrichtigungen an verbundene Geräte ausgewählt und dargestellt werden (aktivierte Ebenen werden von oben nach unten geprüft, die erste verfügbare wird gesendet)</string>
+    <string name="notification_icon_large">Großes Android-Benachrichtigungssymbol einschließen (Kontaktfoto, Album-Cover usw.)</string>
+    <string name="notification_icon_launcher">Symbol der Quell-App einschließen</string>
+    <string name="notification_icon_small">Monochromes Statusleistensymbol einschließen</string>
+    <string name="notification_icon_device_shape">An Startbildschirm-Symbolform anpassen</string>
+    <string name="notification_filter_section_title">Benachrichtigungsfilter</string>
+    <string name="notification_filter_section_desc">Festlegen, welche Apps Benachrichtigungen an verbundene Geräte senden dürfen (lange auf eine App drücken für App-spezifische Datenschutzoptionen)</string>
+</resources>
