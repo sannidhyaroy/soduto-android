@@ -299,15 +299,18 @@ patches:
     - file: src/main/AndroidManifest.xml
       intent: >-
         Change app label to @string/app_name and SendFileActivity label to @string/app_name;
-        register KdeConnectDeviceAdminReceiver for LockReceiverPlugin
+        register KdeConnectDeviceAdminReceiver for LockReceiverPlugin;
+        add FOREGROUND_SERVICE_CAMERA and FOREGROUND_SERVICE_MICROPHONE permissions
+        and WebcamStreamingService declaration for WebcamPlugin
       conflict_prone: true
       resolution_strategy: >-
         Upstream frequently touches the manifest. Our changes are two label attributes
-        on <application> and SendFileActivity, plus the DeviceAdminReceiver block.
-        On conflict, keep our label values and DeviceAdminReceiver registration,
-        and accept upstream's other manifest changes.
+        on <application> and SendFileActivity, the DeviceAdminReceiver block, and
+        the WebcamStreamingService declaration with foregroundServiceType="camera|microphone".
+        On conflict, keep our label values, DeviceAdminReceiver registration, webcam
+        permissions, and WebcamStreamingService entry; accept upstream's other manifest changes.
       upstream_issue: null
-      drop_when: null
+      drop_when: Upstream merges webcam plugin (MR !535)
 
     - file: src/main/res/values/strings.xml
       intent: >-
@@ -357,6 +360,19 @@ patches:
       resolution_strategy: Keep ours. If upstream modifies this file, reapply our tag strings.
       upstream_issue: null
       drop_when: null
+
+    - file: src/main/java/org/kde/kdeconnect/helpers/NotificationHelper.kt
+      intent: >-
+        Add WEBCAM notification channel constant and channel creation in initializeChannels()
+        for WebcamStreamingService foreground notification
+      conflict_prone: false
+      resolution_strategy: >-
+        Keep our WEBCAM channel constant and webcamChannel builder in initializeChannels().
+        Critical: webcamChannel must remain in the channels list passed to
+        deleteUnlistedNotificationChannels() or the channel will be purged on app start.
+        If upstream adds new channels, add them alongside ours.
+      upstream_issue: null
+      drop_when: Upstream merges webcam plugin (MR !535)
 
     - file: src/main/java/org/kde/kdeconnect/helpers/TrustedDevices.kt
       intent: Change log tag from "TrustedDevices" to "Soduto/TrustedDevices"
@@ -677,10 +693,43 @@ patches:
       intent: >-
         Soduto-specific string additions isolated from upstream strings.xml to avoid
         rebase conflicts. Includes: Remote Keyboard UI labels, SystemVolumeProvider
-        settings, notification sync settings, and About screen strings.
+        settings, notification sync settings, About screen strings, and Webcam plugin strings.
 
     - file: protocol.md
       intent: KDE Connect protocol reference (generated from JSON Schemas) for use during plugin development
 
     - file: protocol-extensions.md
-      intent: Soduto protocol extensions (canLock/canUnlock, canShuffle/canLoop, identity metadata, mousepad gestures) separate from the base KDE Connect protocol reference
+      intent: >-
+        Soduto protocol extensions (canLock/canUnlock, canShuffle/canLoop, identity
+        metadata, mousepad gestures, webcam stream_status and request_stream additions)
+        separate from the base KDE Connect protocol reference
+
+    - file: src/main/java/org/kde/kdeconnect/plugins/webcam/WebcamPlugin.kt
+      intent: >-
+        New plugin to receive kdeconnect.webcam.request_stream from desktop and
+        stream device camera + microphone over UDP; sends kdeconnect.webcam.stream_status
+        back to report streaming state and codec
+
+    - file: src/main/java/org/kde/kdeconnect/plugins/webcam/WebcamStreamingService.kt
+      intent: >-
+        Foreground service for WebcamPlugin: Camera2 capture, MediaCodec H.265/H.264
+        video encoding and AAC audio encoding, UDP frame delivery via WebcamFrameSender
+
+    - file: src/main/java/org/kde/kdeconnect/plugins/webcam/WebcamFrameSender.kt
+      intent: >-
+        UDP socket wrapper with 18-byte frame header and fragmentation;
+        handles video and audio frame delivery with sequence numbers and timestamps
+
+    - file: src/main/java/org/kde/kdeconnect/plugins/webcam/WebcamStreamStatus.kt
+      intent: >-
+        Immutable data class snapshot of webcam streaming state (streaming, codec,
+        rotation, cameras, activeCamera, zoom range, flash, desk view) passed to
+        the WebcamPlugin listener callback on every state change
+
+    - file: "src/main/res/values-{de,fr,ja,ko,ru,zh-rCN}/strings_soduto.xml"
+      intent: >-
+        Locale translations for all Soduto-specific strings (webcam plugin, system
+        volume provider, notification sync, remote keyboard, about screen)
+
+    - file: src/main/res/xml/webcamplugin_preferences.xml
+      intent: Preferences screen for WebcamPlugin with front/rear camera selection toggle
