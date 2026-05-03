@@ -438,6 +438,10 @@ class WebcamStreamingService : Service() {
             setInteger(MediaFormat.KEY_I_FRAME_INTERVAL, 2)
             setInteger(MediaFormat.KEY_COLOR_FORMAT,
                 MediaCodecInfo.CodecCapabilities.COLOR_FormatSurface)
+            // Embed SPS/PPS in every keyframe so the receiver can initialize or
+            // re-initialize the decoder at any IDR without needing the codec config
+            // buffer. Makes BUFFER_FLAG_CODEC_CONFIG redundant and safe to skip.
+            setInteger("prepend-sps-pps-to-idr-frames", 1)
         }
 
         val encoder = MediaCodec.createEncoderByType(mime)
@@ -452,6 +456,10 @@ class WebcamStreamingService : Service() {
                 val outputIndex = encoder.dequeueOutputBuffer(bufferInfo, DEQUEUE_TIMEOUT_US)
                 if (outputIndex < 0) continue
                 if (bufferInfo.flags and MediaCodec.BUFFER_FLAG_END_OF_STREAM != 0) break
+                if (bufferInfo.flags and MediaCodec.BUFFER_FLAG_CODEC_CONFIG != 0) {
+                    encoder.releaseOutputBuffer(outputIndex, false)
+                    continue
+                }
 
                 val buffer = encoder.getOutputBuffer(outputIndex) ?: continue
                 buffer.position(bufferInfo.offset)
