@@ -19,6 +19,18 @@ SPDX-License-Identifier: GPL-2.0-only OR GPL-3.0-only OR LicenseRef-KDE-Accepted
     <string name="systemvolumeprovider_custom_label">Stream Label</string>
     <string name="systemvolumeprovider_tap_to_customize">Tap to customize</string>
 
+    <!-- Webcam plugin -->
+    <string name="webcam_use_front_camera_key" translatable="false">webcam_use_front_camera</string>
+    <string name="pref_plugin_webcam">Webcam</string>
+    <string name="pref_plugin_webcam_desc">Stream your phone\'s camera and microphone to connected devices as a webcam</string>
+    <string name="webcam_permission_explanation">Camera and microphone access is required to stream video</string>
+    <string name="webcam_stop_streaming">Stop webcam streaming</string>
+    <string name="notification_channel_webcam">Webcam Streaming</string>
+    <string name="webcam_notification_title">Webcam active</string>
+    <string name="webcam_notification_stop">Stop</string>
+    <string name="webcam_use_front_camera_title">Use front camera</string>
+    <string name="webcam_use_front_camera_summary">Use the front-facing camera as the default instead of the rear camera</string>
+
     <!-- Notification sync settings screen -->
     <string name="notification_sync_settings_title">Notification Sync Settings</string>
     <string name="notification_icon_section_title">Notification Icons</string>
