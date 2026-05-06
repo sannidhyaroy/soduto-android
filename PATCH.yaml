@@ -274,27 +274,37 @@ patches:
         Fix broken logcat filter syntax ("E ClipboardService" passed as a single
         space-containing argument is invalid — always use "ClipboardService:E");
         extract monitoring into startLogcatMonitoringIfNeeded() so it can be triggered
-        without restarting the app when READ_LOGS is granted mid-session
+        without restarting the app when READ_LOGS is granted mid-session;
+        persist clipboard state to SharedPreferences so initialization reads from prefs
+        rather than the system clipboard (background clipboard reads trigger Android 12+
+        denial logs and the "Copied to Clipboard" system toast via our logcat monitor);
+        initialise ClipboardManager synchronously so setText() is immediately usable;
+        accept optional senderTimestamp in setText() so remote timestamps are preserved
       conflict_prone: true
       resolution_strategy: >-
-        Keep our logcat filter fix and startLogcatMonitoringIfNeeded() extraction.
-        If upstream changes the monitoring logic or adds version checks, reapply
-        our filter fix and ensure startLogcatMonitoringIfNeeded() still integrates.
+        Keep our logcat filter fix, startLogcatMonitoringIfNeeded() extraction, SharedPreferences
+        persistence, synchronous ClipboardManager init, and senderTimestamp parameter.
+        If upstream changes the monitoring logic, constructor, or setText() signature,
+        reapply our additions on top.
       upstream_issue: null
-      drop_when: Upstream fixes the logcat filter syntax and adds a post-grant monitoring start
+      drop_when: Upstream fixes the logcat filter syntax, adds post-grant monitoring start, and resolves the background clipboard read issue
 
     - file: src/main/java/org/kde/kdeconnect/plugins/clipboard/ClipboardPlugin.kt
       intent: >-
         Fix inverted canAccessLogs() logic (was returning true on PERMISSION_DENIED);
         rename to hasReadLogsPermission() with correct PERMISSION_GRANTED semantics;
         call startLogcatMonitoringIfNeeded() on device connect to pick up a
-        freshly granted READ_LOGS permission without restarting the app
+        freshly granted READ_LOGS permission without restarting the app;
+        pass sender timestamp to setText() for both CLIPBOARD and CLIPBOARD_CONNECT packets;
+        include timestamp in outgoing PACKET_TYPE_CLIPBOARD packets (previously only
+        CLIPBOARD_CONNECT carried timestamps)
       conflict_prone: false
       resolution_strategy: >-
-        Keep ours. If upstream modifies getUiButtons()/getUiMenuEntries(), reapply
-        our corrected hasReadLogsPermission() check with the correct polarity.
+        Keep ours. If upstream modifies onPacketReceived(), propagateClipboard(), or
+        sendConnectPacket(), reapply our hasReadLogsPermission() polarity fix,
+        senderTimestamp plumbing, and outgoing timestamp on CLIPBOARD packets.
       upstream_issue: null
-      drop_when: Upstream fixes the inverted canAccessLogs() logic
+      drop_when: Upstream fixes the inverted canAccessLogs() logic and adds timestamps to CLIPBOARD packets
 
     - file: src/main/AndroidManifest.xml
       intent: >-

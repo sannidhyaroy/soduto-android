@@ -32,17 +32,16 @@ class ClipboardPlugin : Plugin() {
         val content = np.getString("content")
         when (np.type) {
             (PACKET_TYPE_CLIPBOARD) -> {
-                ClipboardListener.instance(context).setText(content)
+                val senderTimestamp = np.getLong("timestamp")
+                ClipboardListener.instance(context).setText(content, senderTimestamp)
                 return true
             }
             (PACKET_TYPE_CLIPBOARD_CONNECT) -> {
+                val listener = ClipboardListener.instance(context)
                 val packetTime = np.getLong("timestamp")
-                // If the packetTime is 0, it means the timestamp is unknown (so do nothing).
-                if (packetTime == 0L || packetTime < ClipboardListener.instance(context).updateTimestamp) {
-                    return false
-                }
-                if ("content" in np) { // change clipboard if content is in NetworkPacket
-                    ClipboardListener.instance(context).setText(content)
+                if (packetTime == 0L || packetTime < listener.updateTimestamp) return false
+                if ("content" in np) {
+                    listener.setText(content, packetTime)
                 }
                 return true
             }
@@ -60,14 +59,15 @@ class ClipboardPlugin : Plugin() {
     fun propagateClipboard(content: String) {
         val np = NetworkPacket(PACKET_TYPE_CLIPBOARD)
         np["content"] = content
+        np["timestamp"] = ClipboardListener.instance(context).updateTimestamp
         device.sendPacket(np)
     }
 
     private fun sendConnectPacket() {
-        val content = ClipboardListener.instance(context).currentContent ?: return // Send clipboard only if it had been initialized
+        val listener = ClipboardListener.instance(context)
+        val content = listener.currentContent ?: return
         val np = NetworkPacket(PACKET_TYPE_CLIPBOARD_CONNECT)
-        val timestamp = ClipboardListener.instance(context).updateTimestamp
-        np["timestamp"] = timestamp
+        np["timestamp"] = listener.updateTimestamp
         np["content"] = content
         device.sendPacket(np)
     }

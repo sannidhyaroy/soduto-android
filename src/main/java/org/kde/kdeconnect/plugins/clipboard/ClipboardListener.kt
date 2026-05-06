@@ -9,6 +9,7 @@ package org.kde.kdeconnect.plugins.clipboard
 import android.Manifest
 import android.content.ClipboardManager
 import android.content.Context
+import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Handler
@@ -30,18 +31,34 @@ class ClipboardListener {
     private val observers: HashSet<ClipboardObserver> = HashSet()
 
     private val context: Context
+    private lateinit var prefs: SharedPreferences
+
     var currentContent: String? = null
         private set
     var updateTimestamp: Long = 0
         private set
 
+    // cm is initialised synchronously so setText() can use it immediately.
+    // Only the listener registration is deferred to the main thread (so callbacks
+    // fire there), which avoids a timing race where packets arrive before cm is ready.
     private lateinit var cm: ClipboardManager
     @Volatile private var logcatMonitoringStarted = false
 
     private constructor(ctx: Context) {
         context = ctx.applicationContext
+        prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+
+        // Restore last known state from persistence instead of reading the system clipboard.
+        // Reading cm.primaryClip from a background context triggers:
+        //   ClipboardService: Denying clipboard access to <app>
+        // in system logcat. Our own logcat monitor then picks that up and launches
+        // ClipboardFloatingActivity, which shows the "Copied to Clipboard." system toast
+        // even though nothing actually changed. SharedPreferences has no such restriction.
+        currentContent = prefs.getString(KEY_CONTENT, null)
+        updateTimestamp = prefs.getLong(KEY_TIMESTAMP, 0L)
+
+        cm = ContextCompat.getSystemService<ClipboardManager>(context, ClipboardManager::class.java)!!
         Handler(Looper.getMainLooper()).post {
-            cm = ContextCompat.getSystemService<ClipboardManager>(context, ClipboardManager::class.java)!!
             cm.addPrimaryClipChangedListener { this.onClipboardChanged() }
         }
         startLogcatMonitoringIfNeeded()
@@ -87,6 +104,7 @@ class ClipboardListener {
             }
             updateTimestamp = System.currentTimeMillis()
             currentContent = content
+            persistState()
 
             for (observer in observers) {
                 observer.clipboardChanged(content)
@@ -97,20 +115,33 @@ class ClipboardListener {
     }
 
     @Suppress("deprecation")
-    fun setText(text: String?) {
-        if (this::cm.isInitialized) {
-            updateTimestamp = System.currentTimeMillis()
-            currentContent = text
-            cm.text = text
-        }
+    fun setText(text: String?, senderTimestamp: Long = 0) {
+        if (!this::cm.isInitialized) return
+        if (text == currentContent) return
+        updateTimestamp = if (senderTimestamp > 0) senderTimestamp else System.currentTimeMillis()
+        currentContent = text
+        // Persist before the cm.text write. Even if the write is blocked by the OS
+        // (Android 12+ background restriction), future sessions will load the correct
+        // state and skip re-writing identical content, avoiding the denial log and toast.
+        persistState()
+        cm.text = text
+    }
+
+    private fun persistState() {
+        prefs.edit()
+            .putString(KEY_CONTENT, currentContent)
+            .putLong(KEY_TIMESTAMP, updateTimestamp)
+            .apply()
     }
 
     companion object {
+        private const val PREFS_NAME = "clipboard_sync_state"
+        private const val KEY_CONTENT = "content"
+        private const val KEY_TIMESTAMP = "timestamp"
         private var _instance: ClipboardListener? = null
 
         @JvmStatic
         fun instance(context: Context): ClipboardListener {
-            // FIXME: The _instance we return won't be completely initialized yet since initialization happens on a new thread (why?)
             return _instance ?: ClipboardListener(context).also { _instance = it }
         }
     }
