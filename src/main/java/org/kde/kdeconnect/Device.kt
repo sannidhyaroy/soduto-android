@@ -156,6 +156,9 @@ class Device : PacketReceiver {
     val certificate: Certificate
         get() = deviceInfo.certificate
 
+    val isSodutoClient: Boolean
+        get() = deviceInfo.isSodutoClient
+
     val verificationKey: String?
         get() = pairingHandler.verificationKey()
 

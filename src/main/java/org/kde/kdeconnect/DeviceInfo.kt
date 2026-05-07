@@ -10,13 +10,14 @@ import android.content.Context
 import android.util.Base64
 import androidx.annotation.DrawableRes
 import androidx.core.content.ContextCompat
+import androidx.core.content.edit
 import org.kde.kdeconnect.helpers.DeviceHelper
 import org.kde.kdeconnect.helpers.TrustedDevices
+import org.kde.kdeconnect_tp.BuildConfig
 import org.kde.kdeconnect_tp.R
 import java.security.cert.Certificate
 import java.security.cert.CertificateEncodingException
 import java.security.cert.CertificateException
-import androidx.core.content.edit
 
 /**
  * DeviceInfo contains all the properties needed to instantiate a Device.
@@ -29,7 +30,20 @@ class DeviceInfo(
     @JvmField var protocolVersion: Int = 0,
     @JvmField var incomingCapabilities: Set<String>? = null,
     @JvmField var outgoingCapabilities: Set<String>? = null,
+    // Soduto protocol extension fields (kdeconnect.identity additions)
+    @JvmField var clientName: String? = null,
+    @JvmField var clientVersion: String? = null,
+    @JvmField var platformName: String? = null,
+    @JvmField var platformVersion: String? = null,
 ) {
+
+    /**
+     * True when the remote device identifies itself as a Soduto client.
+     * Absence of clientName almost certainly means it is not a Soduto client, so
+     * features exclusive to the Soduto ecosystem should be gated on this flag.
+     */
+    val isSodutoClient: Boolean
+        get() = clientName == BuildConfig.CLIENT_NAME
 
     /**
      * Saves the info in settings so it can be restored later using loadFromSettings().
@@ -44,6 +58,11 @@ class DeviceInfo(
                 putString("deviceName", name)
                 putString("deviceType", type.toString())
                 putInt("protocolVersion", protocolVersion)
+                // Soduto identity extension fields — null means absent/unknown
+                if (clientName != null) putString("clientName", clientName) else remove("clientName")
+                if (clientVersion != null) putString("clientVersion", clientVersion) else remove("clientVersion")
+                if (platformName != null) putString("platformName", platformName) else remove("platformName")
+                if (platformVersion != null) putString("platformVersion", platformVersion) else remove("platformVersion")
             }
         } catch (e: CertificateEncodingException) {
             throw RuntimeException(e)
@@ -63,6 +82,11 @@ class DeviceInfo(
             np["deviceType"] = type.toString()
             np["incomingCapabilities"] = incomingCapabilities!!
             np["outgoingCapabilities"] = outgoingCapabilities!!
+            // Soduto identity extensions — only emitted when populated
+            clientName?.let { np["clientName"] = it }
+            clientVersion?.let { np["clientVersion"] = it }
+            platformName?.let { np["platformName"] = it }
+            platformVersion?.let { np["platformVersion"] = it }
         }
 
     companion object {
@@ -80,6 +104,10 @@ class DeviceInfo(
                     type = DeviceType.fromString(getString("deviceType", "desktop")!!),
                     certificate = TrustedDevices.getDeviceCertificate(context, deviceId),
                     protocolVersion = getInt("protocolVersion", 0),
+                    clientName = getString("clientName", null),
+                    clientVersion = getString("clientVersion", null),
+                    platformName = getString("platformName", null),
+                    platformVersion = getString("platformVersion", null),
                 )
             }
 
@@ -106,7 +134,11 @@ class DeviceInfo(
                     certificate = certificate,
                     protocolVersion = getInt("protocolVersion"),
                     incomingCapabilities = getStringSet("incomingCapabilities"),
-                    outgoingCapabilities = getStringSet("outgoingCapabilities")
+                    outgoingCapabilities = getStringSet("outgoingCapabilities"),
+                    clientName = getStringOrNull("clientName"),
+                    clientVersion = getStringOrNull("clientVersion"),
+                    platformName = getStringOrNull("platformName"),
+                    platformVersion = getStringOrNull("platformVersion"),
                 )
             }
 

@@ -12,6 +12,7 @@ import android.os.Build
 import android.preference.PreferenceManager
 import android.util.Log
 import androidx.core.content.edit
+import org.kde.kdeconnect_tp.BuildConfig
 import com.univocity.parsers.common.TextParsingException
 import com.univocity.parsers.csv.CsvParser
 import com.univocity.parsers.csv.CsvParserSettings
@@ -145,13 +146,17 @@ object DeviceHelper {
     @JvmStatic
     fun getDeviceInfo(context: Context): DeviceInfo {
         return DeviceInfo(
-            getDeviceId(context),
-            SslHelper.certificate,
-            getDeviceName(context),
-            deviceType,
-            PROTOCOL_VERSION,
-            PluginFactory.incomingCapabilities,
-            PluginFactory.outgoingCapabilities
+            id = getDeviceId(context),
+            certificate = SslHelper.certificate,
+            name = getDeviceName(context),
+            type = deviceType,
+            protocolVersion = PROTOCOL_VERSION,
+            incomingCapabilities = PluginFactory.incomingCapabilities,
+            outgoingCapabilities = PluginFactory.outgoingCapabilities,
+            clientName = BuildConfig.CLIENT_NAME,
+            clientVersion = BuildConfig.VERSION_NAME,
+            platformName = BuildConfig.PLATFORM_NAME,
+            platformVersion = Build.VERSION.RELEASE,
         )
     }
 

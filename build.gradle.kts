@@ -31,6 +31,8 @@ val licenseResDir = "$projectDir/build/dependency-license-res"
 // Soduto version (independent of upstream KDE Connect versioning)
 // Scheme: major × 10000 + minor × 100 + patch (e.g. 4.0.0 = 40000, 4.1.0 = 40100).
 // Coordinated with Soduto macOS at the major version level.
+val clientName = "Soduto"
+val platformName = "Android"
 val sodutoVersion = "4.0.0"
 val sodutoVersionCode = 40000
 
@@ -54,6 +56,8 @@ android {
         versionCode = sodutoVersionCode
         versionName = sodutoVersion
         buildConfigField("String", "KDE_VERSION", "\"$kdeVersion\"")
+        buildConfigField("String", "CLIENT_NAME", "\"$clientName\"")
+        buildConfigField("String", "PLATFORM_NAME", "\"$platformName\"")
         proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
     }
     buildFeatures {

@@ -166,16 +166,58 @@ patches:
       intent: >-
         Override applicationId to com.thenoton.soduto; introduce independent Soduto
         versioning (sodutoVersion/sodutoVersionCode/kdeVersion variables defined above
-        android {}); expose KDE_VERSION as a BuildConfig field for the About screen.
+        android {}); expose KDE_VERSION, CLIENT_NAME, and PLATFORM_NAME as BuildConfig
+        fields for the About screen and identity protocol extension.
       conflict_prone: false
       resolution_strategy: >-
         Keep applicationId = "com.thenoton.soduto". versionCode and versionName now
         reference our sodutoVersion/sodutoVersionCode variables instead of literals, so
         upstream versionCode/versionName bumps no longer conflict with those lines.
         Update kdeVersion string when rebasing onto a new upstream release. The
-        buildConfigField("String", "KDE_VERSION", ...) line is Soduto-only; keep it.
+        buildConfigField lines for KDE_VERSION, CLIENT_NAME, and PLATFORM_NAME are
+        Soduto-only; keep all three.
       upstream_issue: null
       drop_when: null
+
+    - file: src/main/java/org/kde/kdeconnect/DeviceInfo.kt
+      intent: >-
+        Add clientName/clientVersion/platformName/platformVersion fields and
+        isSodutoClient computed property for the kdeconnect.identity protocol
+        extension; wire all four paths: outgoing packet, incoming packet parse,
+        saveInSettings, and loadFromSettings
+      conflict_prone: false
+      resolution_strategy: >-
+        Our additions are isolated: four nullable constructor fields with defaults,
+        one computed property, and four extra lines in each of toIdentityPacket(),
+        fromIdentityPacketAndCert(), saveInSettings(), and loadFromSettings().
+        On upstream conflict, reapply these blocks independently.
+      upstream_issue: null
+      drop_when: Upstream adds equivalent client identity fields to DeviceInfo
+
+    - file: src/main/java/org/kde/kdeconnect/helpers/DeviceHelper.kt
+      intent: >-
+        Populate outgoing identity extension fields (clientName, clientVersion,
+        platformName, platformVersion) in getDeviceInfo() so every transport
+        backend sends them automatically
+      conflict_prone: false
+      resolution_strategy: >-
+        Our change is confined to getDeviceInfo(): four extra named arguments
+        added to the DeviceInfo constructor call. On upstream conflict, reapply
+        those four arguments.
+      upstream_issue: null
+      drop_when: Upstream adds equivalent fields to DeviceInfo/DeviceHelper
+
+    - file: src/main/java/org/kde/kdeconnect/Device.kt
+      intent: >-
+        Expose isSodutoClient convenience accessor delegating to
+        deviceInfo.isSodutoClient so plugins can gate Soduto-exclusive features
+        without reaching into deviceInfo directly
+      conflict_prone: false
+      resolution_strategy: >-
+        One computed property added alongside the existing name/icon/deviceType
+        accessors. On upstream conflict, reapply that single property.
+      upstream_issue: null
+      drop_when: Upstream adds equivalent client identity support
 
     - file: fastlane/Appfile
       intent: Update package_name to com.thenoton.soduto for Play Store deployment
