@@ -8,8 +8,10 @@ package org.kde.kdeconnect.plugins.mousereceiver;
 
 import android.accessibilityservice.AccessibilityService;
 import android.accessibilityservice.GestureDescription;
+import android.content.Context;
 import android.graphics.Path;
 import android.graphics.PixelFormat;
+import android.media.AudioManager;
 import android.os.Build;
 import android.os.Handler;
 import android.util.DisplayMetrics;
@@ -303,8 +305,21 @@ public class MouseReceiverService extends AccessibilityService {
 
     public static boolean powerButton() {
         if (instance == null) return false;
-
         return instance.performGlobalAction(GLOBAL_ACTION_LOCK_SCREEN);
+    }
+
+    public static boolean volumeUp() {
+        if (instance == null) return false;
+        AudioManager am = (AudioManager) instance.getSystemService(Context.AUDIO_SERVICE);
+        am.adjustStreamVolume(AudioManager.STREAM_MUSIC, AudioManager.ADJUST_RAISE, AudioManager.FLAG_SHOW_UI);
+        return true;
+    }
+
+    public static boolean volumeDown() {
+        if (instance == null) return false;
+        AudioManager am = (AudioManager) instance.getSystemService(Context.AUDIO_SERVICE);
+        am.adjustStreamVolume(AudioManager.STREAM_MUSIC, AudioManager.ADJUST_LOWER, AudioManager.FLAG_SHOW_UI);
+        return true;
     }
 
     @Override

@@ -64,6 +64,20 @@ class MouseReceiverPlugin : Plugin() {
         val isSingleRelease = np.getBoolean("singlerelease", false)
         val isScroll = np.getBoolean("scroll", false)
 
+        // Soduto extension: discrete long-press (context menu) without starting a drag
+        val isLongClick = np.getBoolean("longclick", false)
+        if (isLongClick) {
+            return MouseReceiverService.longClick()
+        }
+
+        // Soduto extension: named action field for hardware-button equivalents
+        val action = np.getString("action", "")
+        when (action) {
+            "power"      -> return MouseReceiverService.powerButton()
+            "volume_up"  -> return MouseReceiverService.volumeUp()
+            "volume_down" -> return MouseReceiverService.volumeDown()
+        }
+
         if (isSingleClick || isDoubleClick || isMiddleClick || isRightClick || isSingleHold || isSingleRelease || isScroll || isForwardClick || isBackClick) {
             // Perform click
             when {
