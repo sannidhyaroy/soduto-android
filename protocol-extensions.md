@@ -208,6 +208,14 @@ All new fields are optional. Implementations that do not recognise them must sil
     - `middleclick` → Home (`performGlobalAction(GLOBAL_ACTION_HOME)`)
     - `doubleclick` → Recents (`performGlobalAction(GLOBAL_ACTION_RECENTS)`)
 
+#### Soduto macOS keyboard modifier semantics
+
+**Compatibility note:** Soduto macOS sends raw base keys + separate modifier flags (e.g. `"c"` + `shift:true`), whereas standard KDE Connect pre-applies modifiers (`"C"`). The Soduto Android fork automatically detects the sender via `isSiblingClient()` (checks `clientName`) and applies Shift ourselves when receiving from Soduto macOS, so both platforms give consistent input results.
+
+Standard KDE Connect clients pre-shifted characters pass through unchanged (e.g. `"C"` stays `"C"`), maintaining compatibility. This is a transparent implementation detail with no protocol changes.
+
+---
+
 A gesture packet is identified by the presence of `gestureType`. All other existing fields (`dx`, `dy`, `singleclick`, etc.) remain unchanged and unaffected.
 
 #### Swipe gesture
