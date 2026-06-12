@@ -348,6 +348,25 @@ patches:
       upstream_issue: null
       drop_when: Upstream fixes the inverted canAccessLogs() logic and adds timestamps to CLIPBOARD packets
 
+    - file: src/main/java/org/kde/kdeconnect/plugins/sms/SMSPlugin.kt
+      intent: >-
+        Add optional pagination fields (rangeStartTimestamp, numberToRequest) to both
+        PACKET_TYPE_SMS_REQUEST_CONVERSATIONS and PACKET_TYPE_SMS_REQUEST_THREAD_CONVERSATIONS
+        so the desktop can fetch conversations in manageable chunks instead of all at once
+        (prevents tens-of-seconds blocking on heavy SMS users);
+        stamp conversation response packets with hasMore=true/false to signal end-of-list
+        without relying on fragile "fewer results than requested" heuristic;
+        wrap conversation request handlers in SodutoSMSDozeHelper.withWakeLock() so Android
+        doze mode doesn't throttle the per-thread DB queries inside getConversations
+      conflict_prone: false
+      resolution_strategy: >-
+        Keep ours. Pagination fields are optional and ignored by stock KDE Connect Desktop.
+        If upstream modifies onPacketReceived() or the conversation request handlers, reapply
+        our pagination parsing and hasMore stamping logic, plus the doze-prevention wake lock
+        wrapping around the handler methods.
+      upstream_issue: null
+      drop_when: Upstream implements conversation pagination with or without hasMore signalling
+
     - file: src/main/AndroidManifest.xml
       intent: >-
         Change app label to @string/app_name and SendFileActivity label to @string/app_name;
@@ -643,6 +662,13 @@ patches:
         Owns all notification icon row UI logic (two-target row via shared
         list_item_two_target_toggle, bottom sheet, master/child toggle sync)
         extracted from NotificationFilterActivity to minimise upstream file changes
+
+    - file: src/main/java/org/kde/kdeconnect/plugins/sms/SodutoSMSDozeHelper.kt
+      intent: >-
+        Helper class providing withWakeLock() lambda wrapper that acquires a partial wake lock
+        during SMS conversation request handler execution to prevent Android doze mode from
+        throttling the per-thread DB queries inside getConversations(). Without this,
+        heavy SMS users experience minutes-long stalls until the phone screen is woken.
 
     - file: src/main/res/layout/bottom_sheet_notification_icon_settings.xml
       intent: Bottom sheet layout for configuring notification icon hierarchy levels and rendering style
