@@ -138,7 +138,11 @@ class SMSPlugin : Plugin() {
      *
      * Should only be called after initializing the mostRecentTimestamp
      */
-    private fun sendLatestMessage() {
+    private fun sendLatestMessage() = SodutoSMSDozeHelper.withWakeLock(context) {
+        // Soduto extension: wrap in partial wake lock so doze mode doesn't stall the
+        // SMS DB query when the phone screen has been off for a while. See
+        // SodutoSMSDozeHelper for the full rationale.
+        //
         // Lock so no one uses the mostRecentTimestamp between the moment we read it and the
         // moment we update it. This is because reading the Messages DB can take long.
         mostRecentTimestampLock.lock()
@@ -148,7 +152,7 @@ class SMSPlugin : Plugin() {
             // for message updates, so just drop them rather than spending battery/time sending
             // updates that don't matter.
             mostRecentTimestampLock.unlock()
-            return
+            return@withWakeLock
         }
         val messages: List<SMSHelper.Message> = getMessagesInRange(context, null, mostRecentTimestamp, null, false)
 
@@ -326,7 +330,11 @@ class SMSPlugin : Plugin() {
      * @param packet One packet of type [PACKET_TYPE_SMS_REQUEST_CONVERSATIONS] with the first message in all conversations that will be send
      */
     @WorkerThread
-    private fun handleRequestAllConversations(packet: NetworkPacket): Boolean {
+    private fun handleRequestAllConversations(packet: NetworkPacket): Boolean = SodutoSMSDozeHelper.withWakeLock(context) {
+        // Soduto extension: wrap in partial wake lock. Without this, doze mode throttles
+        // the per-thread DB queries inside `getConversations` to the point where heavy
+        // SMS users see minutes-long stalls until they wake the phone screen. See
+        // SodutoSMSDozeHelper for full rationale.
         haveMessagesBeenRequested = true
 
         val rangeStartTimestamp: Long = packet.getLong("rangeStartTimestamp", -1)
@@ -367,11 +375,14 @@ class SMSPlugin : Plugin() {
             device.sendPacket(partialReply)
         }
 
-        return true
+        true
     }
 
     @WorkerThread
-    private fun handleRequestSingleConversation(packet: NetworkPacket): Boolean {
+    private fun handleRequestSingleConversation(packet: NetworkPacket): Boolean = SodutoSMSDozeHelper.withWakeLock(context) {
+        // Soduto extension: wrap in partial wake lock — same reasoning as
+        // handleRequestAllConversations above. Single-thread fetches are smaller but
+        // still benefit when the phone is in doze and the desktop is paginating.
         haveMessagesBeenRequested = true
         val threadID = ThreadID(packet.getLong("threadID"))
 
@@ -406,7 +417,7 @@ class SMSPlugin : Plugin() {
 
         device.sendPacket(reply)
 
-        return true
+        true
     }
 
     private fun isNumberBlocked(number: String?): Boolean {
