@@ -156,8 +156,8 @@ class Device : PacketReceiver {
     val certificate: Certificate
         get() = deviceInfo.certificate
 
-    val isSodutoClient: Boolean
-        get() = deviceInfo.isSodutoClient
+    val isSiblingClient: Boolean
+        get() = deviceInfo.isSiblingClient
 
     val verificationKey: String?
         get() = pairingHandler.verificationKey()
@@ -374,6 +374,15 @@ class Device : PacketReceiver {
                 deviceInfo.saveInSettings(context)
             }
         }
+
+        // Always refresh identity extension fields unconditionally.
+        // These aren't saved in settings on older builds so they must be refreshed
+        // each connection; without this, clientName stays null for previously-paired
+        // devices
+        deviceInfo.clientName = newDeviceInfo.clientName
+        deviceInfo.clientVersion = newDeviceInfo.clientVersion
+        deviceInfo.platformName = newDeviceInfo.platformName
+        deviceInfo.platformVersion = newDeviceInfo.platformVersion
 
         val oldIncomingCapabilities = deviceInfo.incomingCapabilities
         val oldOutgoingCapabilities = deviceInfo.outgoingCapabilities

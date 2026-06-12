@@ -37,12 +37,7 @@ class DeviceInfo(
     @JvmField var platformVersion: String? = null,
 ) {
 
-    /**
-     * True when the remote device identifies itself as a Soduto client.
-     * Absence of clientName almost certainly means it is not a Soduto client, so
-     * features exclusive to the Soduto ecosystem should be gated on this flag.
-     */
-    val isSodutoClient: Boolean
+    val isSiblingClient: Boolean
         get() = clientName == BuildConfig.CLIENT_NAME
 
     /**
@@ -82,7 +77,7 @@ class DeviceInfo(
             np["deviceType"] = type.toString()
             np["incomingCapabilities"] = incomingCapabilities!!
             np["outgoingCapabilities"] = outgoingCapabilities!!
-            // Soduto identity extensions — only emitted when populated
+            // Soduto identity extensions (only emitted when populated)
             clientName?.let { np["clientName"] = it }
             clientVersion?.let { np["clientVersion"] = it }
             platformName?.let { np["platformName"] = it }
