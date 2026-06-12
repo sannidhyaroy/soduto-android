@@ -323,8 +323,16 @@ public class RemoteKeyboardPlugin extends Plugin implements SharedPreferences.On
         else if (key.equalsIgnoreCase("a") && ctrl)
             return inputConn.performContextMenuAction(android.R.id.selectAll);
 
-//        Log.d("RemoteKeyboardPlugin", "Committing visible key '" + key + "'");
-        inputConn.commitText(key, key.length());
+        // Soduto macOS sends the raw base key + separate modifier flags ("c" + shift:true).
+        // Standard KDE Connect clients pre-apply modifiers ("C" already).
+        // When the peer is Soduto, apply shift ourselves so both physical and on-screen
+        // keyboard give the same result. Backwards-compatible: "C".toUpperCase() == "C".
+        String text = key;
+        if (shift && device.isSiblingClient()) {
+            text = applyShift(key);
+        }
+//        Log.d("RemoteKeyboardPlugin", "Committing visible key '" + text + "'");
+        inputConn.commitText(text, text.length());
         return true;
     }
 
@@ -436,6 +444,27 @@ public class RemoteKeyboardPlugin extends Plugin implements SharedPreferences.On
             final boolean editingOnly = sharedPreferences.getBoolean(context.getString(R.string.remotekeyboard_editing_only), true);
             final boolean visible = RemoteKeyboardService.instance != null && RemoteKeyboardService.instance.visible;
             notifyKeyboardState(!editingOnly || visible);
+        }
+    }
+
+    /**
+     * Applies the Shift modifier to a single character.
+     * Used when Soduto macOS sends raw key + separate shift flag (e.g. "c" + shift:true → "C",
+     * "[" + shift:true → "{"). Covers US keyboard layout symbols; letters use standard uppercase.
+     */
+    private static String applyShift(String key) {
+        if (key == null || key.length() != 1) return key;
+        char c = key.charAt(0);
+        if (Character.isLetter(c)) return key.toUpperCase();
+        switch (c) {
+            case '`': return "~";  case '1': return "!";  case '2': return "@";
+            case '3': return "#";  case '4': return "$";  case '5': return "%";
+            case '6': return "^";  case '7': return "&";  case '8': return "*";
+            case '9': return "(";  case '0': return ")";  case '-': return "_";
+            case '=': return "+";  case '[': return "{";  case ']': return "}";
+            case '\\': return "|"; case ';': return ":";  case '\'': return "\"";
+            case ',': return "<";  case '.': return ">";  case '/': return "?";
+            default: return key;
         }
     }
 }
