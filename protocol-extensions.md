@@ -157,7 +157,54 @@ The base protocol already includes `canPlay`, `canPause`, `canGoNext`, `canGoPre
 
 ### `kdeconnect.mousepad.request` additions
 
-The base protocol supports cursor movement (`dx`/`dy`), scroll, clicks, and keyboard events. The following fields add multi-finger gesture support.
+The base protocol supports cursor movement (`dx`/`dy`), scroll, clicks, and keyboard events. The following fields extend that with gesture support, a discrete long-press action, and hardware-button equivalents.
+
+All new fields are optional. Implementations that do not recognise them must silently ignore them.
+
+#### Discrete long press
+
+```js
+{
+    "id": 0,
+    "type": "kdeconnect.mousepad.request",
+    "body": {
+        "longclick": true
+    }
+}
+```
+
+* `longclick`: **`Boolean`**
+
+    Fires a single discrete long-press (equivalent to `AccessibilityNodeInfo.ACTION_LONG_CLICK`) at the current cursor position. Distinct from `singlehold`, which starts a drag gesture (`longClickSwipe`). Use `longclick` to open context menus; use `singlehold` + movement + `singlerelease` for drag-and-drop.
+
+#### Hardware-button actions
+
+```js
+{
+    "id": 0,
+    "type": "kdeconnect.mousepad.request",
+    "body": {
+        "action": "volume_up"
+    }
+}
+```
+
+* `action`: **`String`**
+
+    **`enum`**: `'power'` | `'volume_up'` | `'volume_down'`
+
+    Triggers a hardware-button equivalent on the remote device.
+
+    | `action`      | Android behaviour |
+    |---|---|
+    | `power`       | Lock screen (`GLOBAL_ACTION_LOCK_SCREEN`) |
+    | `volume_up`   | Raise media volume (`ADJUST_RAISE` on `STREAM_MUSIC`) |
+    | `volume_down` | Lower media volume (`ADJUST_LOWER` on `STREAM_MUSIC`) |
+
+    Note: Back, Home, and Recents are intentionally absent from `action`. Those are already handled by the existing physical-mouse button mappings that work with all KDE Connect clients:
+    - `rightclick` → Back (`performGlobalAction(GLOBAL_ACTION_BACK)`)
+    - `middleclick` → Home (`performGlobalAction(GLOBAL_ACTION_HOME)`)
+    - `doubleclick` → Recents (`performGlobalAction(GLOBAL_ACTION_RECENTS)`)
 
 A gesture packet is identified by the presence of `gestureType`. All other existing fields (`dx`, `dy`, `singleclick`, etc.) remain unchanged and unaffected.
 
