@@ -182,7 +182,7 @@ patches:
     - file: src/main/java/org/kde/kdeconnect/DeviceInfo.kt
       intent: >-
         Add clientName/clientVersion/platformName/platformVersion fields and
-        isSodutoClient computed property for the kdeconnect.identity protocol
+        isSiblingClient computed property for the kdeconnect.identity protocol
         extension; wire all four paths: outgoing packet, incoming packet parse,
         saveInSettings, and loadFromSettings
       conflict_prone: false
@@ -209,13 +209,16 @@ patches:
 
     - file: src/main/java/org/kde/kdeconnect/Device.kt
       intent: >-
-        Expose isSodutoClient convenience accessor delegating to
-        deviceInfo.isSodutoClient so plugins can gate Soduto-exclusive features
-        without reaching into deviceInfo directly
+        Expose isSiblingClient convenience accessor for gate Soduto-exclusive
+        features; unconditionally refresh identity extension fields (clientName,
+        clientVersion, platformName, platformVersion) from incoming identity
+        packets on every connect so previously-paired devices load these fields
+        even if they weren't saved in older builds
       conflict_prone: false
       resolution_strategy: >-
-        One computed property added alongside the existing name/icon/deviceType
-        accessors. On upstream conflict, reapply that single property.
+        One computed property accessor plus four-line unconditional identity
+        field refresh block in updateFromIdentityPacket(). On upstream conflict
+        in that method, reapply the refresh block independently from other changes.
       upstream_issue: null
       drop_when: Upstream adds equivalent client identity support
 
@@ -523,6 +526,21 @@ patches:
         still integrates correctly and update the call sites.
       upstream_issue: null
       drop_when: null
+
+    - file: src/main/java/org/kde/kdeconnect/plugins/remotekeyboard/RemoteKeyboardPlugin.java
+      intent: >-
+        Handle Soduto macOS shift modifier semantics: Soduto sends raw base key + separate
+        shift flag ("c" + shift:true), while standard KDE Connect pre-applies modifiers ("C").
+        Apply shift when peer is isSiblingClient so both physical and on-screen keyboards
+        give consistent results; add applyShift() helper for US keyboard layout symbols
+      conflict_prone: false
+      resolution_strategy: >-
+        Shift is applied conditionally in onKey() before commitText(). applyShift() is a
+        new static helper method. If upstream modifies onKey(), reapply the conditional
+        shift logic before commitText(). Backwards-compatible: pre-shifted keys pass through
+        unchanged.
+      upstream_issue: null
+      drop_when: Upstream differentiates between base-key + modifiers and pre-applied modifiers
 
     - file: src/main/res/layout/widget_remotecommandplugin.xml
       intent: Replace KDE Connect icon with Soduto foreground in widget title bar; fix ImageView size
