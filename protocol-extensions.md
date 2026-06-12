@@ -20,6 +20,8 @@ All fields documented here are optional unless marked **required**.
   - [`kdeconnect.mpris` additions](#kdeconnectmpris-additions)
 - [MousePad Plugin Extensions](#mousepad-plugin-extensions)
   - [`kdeconnect.mousepad.request` additions](#kdeconnectmousepadrequest-additions)
+- [SMS Plugin Extensions](#sms-plugin-extensions)
+  - [`kdeconnect.sms.request_conversations` and `kdeconnect.sms.request_thread_conversations` pagination](#sms-pagination-extension)
 - [Webcam Plugin](#webcam-plugin)
   - [Overview](#overview)
   - [`kdeconnect.webcam.request_stream`](#kdeconnectwebcamrequest_stream)
@@ -297,6 +299,67 @@ A gesture packet is identified by the presence of `gestureType`. All other exist
     The rotation angle in degrees at the end of the gesture. Positive values indicate clockwise rotation; negative values indicate counter-clockwise. Required when `gestureType` is `"rotate"`.
 
     **`range`**: `-360.0`–`360.0`
+
+---
+
+
+## SMS Plugin Extensions
+
+### SMS pagination extension
+
+The base `kdeconnect.sms.request_conversations` and `kdeconnect.sms.request_thread_conversations` packets request messages without any limit, causing all matching messages to be serialized at once. On heavy SMS users (8+ years of history, DLT sender IDs, OTPs, marketing) this can mean tens of thousands of unique threads — all of them packed into the response floods the connection channel, blocking it for tens of seconds while the desktop waits for the entire list to arrive before it can render anything.
+
+This extension adds optional pagination fields to both request types and an optional `hasMore` response field so the desktop can fetch conversations in manageable chunks.
+
+#### Request extension
+
+Both `kdeconnect.sms.request_conversations` and `kdeconnect.sms.request_thread_conversations` may include:
+
+```js
+{
+    "id": 0,
+    "type": "kdeconnect.sms.request_conversations",
+    "body": {
+        "rangeStartTimestamp": 1620000000000,
+        "numberToRequest": 50
+    }
+}
+```
+
+* `rangeStartTimestamp`: **`Long`** (millisecond epoch)
+
+    Optional. When present, only conversations whose latest message is **strictly older** than this timestamp are returned. Use the timestamp of the oldest already-loaded conversation to fetch the next page.
+    
+    Allows the desktop to implement "scroll to load more" UI without fetching the entire history on every request.
+
+* `numberToRequest`: **`Long`**
+
+    Optional. Maximum number of conversations to return, ordered newest-first (the default sort order in both request types). When absent, all matching conversations are returned (original unbounded behaviour).
+
+#### Response extension
+
+```js
+{
+    "id": 0,
+    "type": "kdeconnect.sms",
+    "body": {
+        "thread": [...],
+        "hasMore": true
+    }
+}
+```
+
+* `hasMore`: **`Boolean`**
+
+    Indicates whether there are more conversations/messages beyond those returned in this response.
+    
+    - `hasMore=true` — more results exist; the desktop may fetch the next page by setting `rangeStartTimestamp` to the timestamp of the oldest message in this response
+    - `hasMore=false` — end of list reached; no more pagination needed
+    - Field absent — unknown (treat as per-packet state: if fewer results returned than `numberToRequest`, assume end; otherwise, assume more exist)
+
+    Only the final response packet in a page carries `hasMore`. Non-final packets in a batch response omit the field (to save bandwidth and avoid sending redundant signals).
+
+    Stock KDE Connect Desktop ignores unknown fields; this extension is backward-compatible.
 
 ---
 
