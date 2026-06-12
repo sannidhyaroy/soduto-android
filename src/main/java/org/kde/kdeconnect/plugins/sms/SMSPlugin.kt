@@ -303,16 +303,67 @@ class SMSPlugin : Plugin() {
     /**
      * Respond to a request for all conversations
      *
+     * Soduto extension: honour optional `numberToRequest` and `rangeStartTimestamp` body
+     * fields so the desktop can paginate the conversation list instead of receiving every
+     * thread on every connect. Heavy SMS users (8+ years of history, DLT sender IDs, OTPs,
+     * marketing) can accumulate tens of thousands of unique threads — flooding all of them
+     * blocks the connection channel for tens of seconds. Empty body keeps the original
+     * unbounded behaviour for stock KDE Connect Desktop compatibility.
+     *
+     * Soduto extension #2: stamp the last delivered packet with `hasMore=false` and the
+     * preceding packets with `hasMore=true`. The desktop uses this as an authoritative
+     * end-of-list signal instead of relying on a fragile "did Android return fewer than
+     * requested" count heuristic (which is ambiguous when the page happens to be exactly
+     * `numberToRequest`). Stock KDE Connect Desktop ignores unknown fields gracefully.
+     *
+     * Stay on the Sequence — `getConversations` does ONE DB query per element via the
+     * inner `sequence { yield(getMessagesInThread(...)) }`. Calling `.toList()` would
+     * materialise every conversation up-front (every DB query runs before the first
+     * packet is sent), giving the desktop a multi-minute silence on heavy-SMS phones.
+     * The Sequence is already sorted newest-first (see `SMSHelper.getConversations`
+     * Step 1 sortedWith), so no extra sort is needed here.
+     *
      * @param packet One packet of type [PACKET_TYPE_SMS_REQUEST_CONVERSATIONS] with the first message in all conversations that will be send
      */
     @WorkerThread
     private fun handleRequestAllConversations(packet: NetworkPacket): Boolean {
         haveMessagesBeenRequested = true
-        val conversations: Iterator<SMSHelper.Message> = getConversations(this.context).iterator()
 
-        while (conversations.hasNext()) {
-            val message: SMSHelper.Message = conversations.next()
+        val rangeStartTimestamp: Long = packet.getLong("rangeStartTimestamp", -1)
+        val numberToRequest: Long = packet.getLong("numberToRequest", -1)
+
+        var conversations: Sequence<SMSHelper.Message> = getConversations(this.context)
+
+        if (rangeStartTimestamp > 0) {
+            conversations = conversations.filter { it.date < rangeStartTimestamp }
+        }
+
+        // We need to know whether we're delivering the last message in the page so the
+        // final packet can carry `hasMore=false`. `take(n+1)` lets us peek one beyond the
+        // cap without materialising the entire sequence.
+        val capped: List<SMSHelper.Message> = if (numberToRequest > 0) {
+            conversations.take(numberToRequest.toInt() + 1).toList()
+        } else {
+            conversations.toList()
+        }
+        val toSend: List<SMSHelper.Message>
+        val hasMore: Boolean
+        if (numberToRequest > 0 && capped.size > numberToRequest.toInt()) {
+            toSend = capped.dropLast(1)
+            hasMore = true
+        } else {
+            toSend = capped
+            hasMore = false
+        }
+
+        for ((index, message) in toSend.withIndex()) {
             val partialReply: NetworkPacket = constructBulkMessagePacket(setOf(message))
+            // Only the last packet in a page carries the authoritative end signal so the
+            // desktop knows the stream is done without waiting on a settle timer.
+            val isLast = index == toSend.size - 1
+            if (isLast) {
+                partialReply.set("hasMore", hasMore)
+            }
             device.sendPacket(partialReply)
         }
 
@@ -331,13 +382,27 @@ class SMSPlugin : Plugin() {
             numberToGet = null
         }
 
-        val conversation = if (rangeStartTimestamp < 0) {
-            getMessagesInThread(this.context, threadID, numberToGet)
+        // Soduto extension: ask for one extra so we can detect "is this the last page?"
+        // and stamp the response with hasMore. Same fallback behaviour as the all-convos
+        // handler — stock desktops ignore the field.
+        val probeLimit: Long? = numberToGet?.plus(1)
+        val fetched: List<SMSHelper.Message> = if (rangeStartTimestamp < 0) {
+            getMessagesInThread(this.context, threadID, probeLimit)
         } else {
-            getMessagesInRange(this.context, threadID, rangeStartTimestamp, numberToGet, true)
+            getMessagesInRange(this.context, threadID, rangeStartTimestamp, probeLimit, true)
+        }
+        val conversation: List<SMSHelper.Message>
+        val hasMore: Boolean
+        if (numberToGet != null && fetched.size > numberToGet.toInt()) {
+            conversation = fetched.dropLast(1)
+            hasMore = true
+        } else {
+            conversation = fetched
+            hasMore = false
         }
 
         val reply: NetworkPacket = constructBulkMessagePacket(conversation)
+        reply.set("hasMore", hasMore)
 
         device.sendPacket(reply)
 
@@ -462,7 +527,15 @@ class SMSPlugin : Plugin() {
         /**
          * Packet sent to request the most-recent message in each conversations on the device
          *
-         * The request packet shall contain no body
+         * The request packet may be empty (returns every conversation) or include the
+         * Soduto pagination extension:
+         * "rangeStartTimestamp": <long> // (Optional) Millisecond epoch; only conversations
+         *                               // whose latest message is strictly older than this
+         *                               // timestamp will be returned. Use the date of the
+         *                               // oldest already-loaded conversation to fetch the
+         *                               // next page.
+         * "numberToRequest": <long>     // (Optional) Cap on the number of conversations
+         *                               // returned, ordered newest first.
          */
         private const val PACKET_TYPE_SMS_REQUEST_CONVERSATIONS: String = "kdeconnect.sms.request_conversations"
 
