@@ -42,4 +42,15 @@ SPDX-License-Identifier: GPL-2.0-only OR GPL-3.0-only OR LicenseRef-KDE-Accepted
     <string name="notification_icon_device_shape">Совпадать с формой значков главного экрана</string>
     <string name="notification_filter_section_title">Фильтр уведомлений</string>
     <string name="notification_filter_section_desc">Выберите, какие приложения могут отправлять уведомления на подключённые устройства (долгое нажатие на приложение — для настройки параметров конфиденциальности)</string>
+
+    <!-- Find My Phone -->
+    <string name="findmyphone_ringing_title">Звонок на этом устройстве</string>
+    <string name="findmyphone_fullscreen_title">Показывать экран звонка поверх блокировки</string>
+    <string name="findmyphone_fullscreen_summary_off">Звонить как полноэкранное оповещение поверх блокировки, когда экран выключен</string>
+    <string name="findmyphone_fullscreen_summary_on">Во время звонка Soduto покажет полноэкранное оповещение поверх блокировки</string>
+
+    <!-- Persistent Background Access (app-wide) -->
+    <string name="settings_battery_optimization_title">Постоянный доступ в фоне</string>
+    <string name="settings_battery_optimization_summary_off">У Soduto нет доступа для работы в фоне, чтобы оставаться на связи, пока телефон бездействует</string>
+    <string name="settings_battery_optimization_summary_on">Soduto останется на связи, даже когда телефон бездействует</string>
 </resources>

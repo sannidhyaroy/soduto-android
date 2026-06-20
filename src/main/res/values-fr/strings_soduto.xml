@@ -42,4 +42,15 @@ SPDX-License-Identifier: GPL-2.0-only OR GPL-3.0-only OR LicenseRef-KDE-Accepted
     <string name="notification_icon_device_shape">Adapter à la forme des icônes de l\'écran d\'accueil</string>
     <string name="notification_filter_section_title">Filtre de notifications</string>
     <string name="notification_filter_section_desc">Choisir quelles applications peuvent envoyer des notifications aux appareils connectés (appui long sur une application pour les options de confidentialité par application)</string>
+
+    <!-- Find My Phone -->
+    <string name="findmyphone_ringing_title">Cet appareil sonne</string>
+    <string name="findmyphone_fullscreen_title">Afficher l\'écran de sonnerie sur l\'écran de verrouillage</string>
+    <string name="findmyphone_fullscreen_summary_off">Sonner en plein écran par-dessus l\'écran de verrouillage quand l\'écran est éteint</string>
+    <string name="findmyphone_fullscreen_summary_on">Soduto affichera une alerte en plein écran par-dessus l\'écran de verrouillage pendant la sonnerie</string>
+
+    <!-- Persistent Background Access (app-wide) -->
+    <string name="settings_battery_optimization_title">Accès permanent en arrière-plan</string>
+    <string name="settings_battery_optimization_summary_off">Soduto n\'a pas l\'autorisation de s\'exécuter en arrière-plan pour rester connecté pendant que votre téléphone est inactif</string>
+    <string name="settings_battery_optimization_summary_on">Soduto restera connecté même lorsque le téléphone est inactif</string>
 </resources>

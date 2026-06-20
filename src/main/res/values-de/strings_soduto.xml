@@ -42,4 +42,15 @@ SPDX-License-Identifier: GPL-2.0-only OR GPL-3.0-only OR LicenseRef-KDE-Accepted
     <string name="notification_icon_device_shape">An Startbildschirm-Symbolform anpassen</string>
     <string name="notification_filter_section_title">Benachrichtigungsfilter</string>
     <string name="notification_filter_section_desc">Festlegen, welche Apps Benachrichtigungen an verbundene Geräte senden dürfen (lange auf eine App drücken für App-spezifische Datenschutzoptionen)</string>
+
+    <!-- Find My Phone -->
+    <string name="findmyphone_ringing_title">Dieses Gerät klingelt</string>
+    <string name="findmyphone_fullscreen_title">Klingelbildschirm über Sperrbildschirm anzeigen</string>
+    <string name="findmyphone_fullscreen_summary_off">Als Vollbildbenachrichtigung über dem Sperrbildschirm klingeln, wenn der Bildschirm aus ist</string>
+    <string name="findmyphone_fullscreen_summary_on">Soduto zeigt beim Klingeln eine Vollbildbenachrichtigung über dem Sperrbildschirm</string>
+
+    <!-- Persistent Background Access (app-wide) -->
+    <string name="settings_battery_optimization_title">Dauerhafter Hintergrundzugriff</string>
+    <string name="settings_battery_optimization_summary_off">Soduto darf nicht im Hintergrund laufen, um verbunden zu bleiben, während dein Telefon inaktiv ist</string>
+    <string name="settings_battery_optimization_summary_on">Soduto bleibt verbunden, auch wenn das Telefon inaktiv ist</string>
 </resources>

@@ -14,6 +14,8 @@ import android.graphics.Color
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.os.PowerManager
+import android.provider.Settings
 import android.text.InputFilter
 import android.text.InputFilter.LengthFilter
 import android.text.Spanned
@@ -64,6 +66,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
             deviceNamePref(context),
             themePref(context),
             persistentNotificationPref(context),
+            batteryOptimizationPref(context),
             trustedNetworkPref(context),
             devicesByIpPref(context),
             bluetoothSupportPref(context),
@@ -160,6 +163,43 @@ class SettingsFragment : PreferenceFragmentCompat() {
                 true
             }
         }
+
+    private lateinit var batteryOptimizationPreference: SodutoGrantedCheckPreference
+
+    private val batteryOptimizationLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+        updateBatteryOptimizationSummary()
+    }
+
+    /**
+     * Lets the user exempt Soduto from battery optimization so the background connection survives
+     * Doze — keeping every connection-dependent feature (notifications, clipboard, media control,
+     * Find My Phone, …) reliable after the phone has been idle.
+     */
+    private fun batteryOptimizationPref(context: Context) = SodutoGrantedCheckPreference(context).apply {
+        batteryOptimizationPreference = this
+        isPersistent = false
+        setTitle(R.string.settings_battery_optimization_title)
+        updateBatteryOptimizationSummary()
+        onPreferenceClickListener = Preference.OnPreferenceClickListener {
+            val intent = Intent(
+                Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS,
+                Uri.fromParts("package", context.packageName, null)
+            )
+            batteryOptimizationLauncher.launch(intent)
+            true
+        }
+    }
+
+    private fun updateBatteryOptimizationSummary() {
+        if (!::batteryOptimizationPreference.isInitialized) return
+        val powerManager = ContextCompat.getSystemService(requireContext(), PowerManager::class.java)
+        val exempt = powerManager == null || powerManager.isIgnoringBatteryOptimizations(requireContext().packageName)
+        batteryOptimizationPreference.setSummary(
+            if (exempt) R.string.settings_battery_optimization_summary_on
+            else R.string.settings_battery_optimization_summary_off
+        )
+        batteryOptimizationPreference.isGranted = exempt
+    }
 
     val activityLauncherWithDevicesByIpRefresh = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
         updateDevicesByIpSummary()

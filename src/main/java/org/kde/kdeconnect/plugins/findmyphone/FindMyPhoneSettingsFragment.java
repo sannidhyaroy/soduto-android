@@ -12,6 +12,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.media.RingtoneManager;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.widget.Toast;
@@ -26,6 +27,7 @@ import androidx.preference.PreferenceManager;
 import androidx.preference.SwitchPreference;
 
 import org.kde.kdeconnect.ui.PluginSettingsFragment;
+import org.kde.kdeconnect.ui.SodutoGrantedCheckPreference;
 import org.kde.kdeconnect_tp.R;
 
 public class FindMyPhoneSettingsFragment extends PluginSettingsFragment {
@@ -36,6 +38,7 @@ public class FindMyPhoneSettingsFragment extends PluginSettingsFragment {
     private SharedPreferences sharedPreferences;
     private Preference ringtonePreference;
     private SwitchPreference flashlightPreference;
+    private SodutoGrantedCheckPreference fullScreenIntentPreference;
 
     private final ActivityResultLauncher<String> requestCameraPermission = registerForActivityResult(
             new ActivityResultContracts.RequestPermission(),
@@ -71,8 +74,10 @@ public class FindMyPhoneSettingsFragment extends PluginSettingsFragment {
 
         ringtonePreference = getPreferenceScreen().findPreference(preferenceKeyRingtone);
         flashlightPreference = getPreferenceScreen().findPreference(preferenceKeyFlashlight);
+        fullScreenIntentPreference = getPreferenceScreen().findPreference(getString(R.string.findmyphone_preference_key_fullscreen));
 
         setRingtoneSummary();
+        setupReliabilityPreferences();
 
         if (flashlightPreference != null) {
             flashlightPreference.setOnPreferenceChangeListener((pref, newValue) -> {
@@ -92,6 +97,29 @@ public class FindMyPhoneSettingsFragment extends PluginSettingsFragment {
     public void onResume() {
         super.onResume();
         syncFlashlightPreferenceWithPermission();
+        updateReliabilitySummaries();
+    }
+
+    private void setupReliabilityPreferences() {
+        if (fullScreenIntentPreference != null) {
+            // The access only exists (and can be withheld) on Android 14+; hide it elsewhere.
+            fullScreenIntentPreference.setVisible(Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE);
+            fullScreenIntentPreference.setOnPreferenceClickListener(pref -> {
+                startActivity(SodutoFindMyPhone.fullScreenIntentSettings(requireContext()));
+                return true;
+            });
+        }
+        updateReliabilitySummaries();
+    }
+
+    private void updateReliabilitySummaries() {
+        if (fullScreenIntentPreference != null && fullScreenIntentPreference.isVisible()) {
+            boolean granted = SodutoFindMyPhone.canUseFullScreenIntent(requireContext());
+            fullScreenIntentPreference.setSummary(granted
+                    ? R.string.findmyphone_fullscreen_summary_on
+                    : R.string.findmyphone_fullscreen_summary_off);
+            fullScreenIntentPreference.setGranted(granted);
+        }
     }
 
     private void syncFlashlightPreferenceWithPermission() {

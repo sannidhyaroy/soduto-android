@@ -22,6 +22,7 @@ import android.provider.Settings;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
 import androidx.core.content.ContextCompat;
 import androidx.preference.PreferenceManager;
@@ -49,6 +50,8 @@ public class FindMyPhonePlugin extends Plugin {
     private int previousVolume = -1;
     private PowerManager powerManager;
     private FlashlightManager flashlightManager;
+    private SodutoRingTimeout ringTimeout;
+    private SodutoRingStopper ringStopper;
 
     @Override
     public @NonNull String getDisplayName() {
@@ -75,6 +78,10 @@ public class FindMyPhonePlugin extends Plugin {
         audioManager = ContextCompat.getSystemService(context, AudioManager.class);
         powerManager = ContextCompat.getSystemService(context, PowerManager.class);
         flashlightManager = new FlashlightManager(context);
+        // Stop ringing by itself after a while so a lost device can't ring forever (Find My Device parity)
+        ringTimeout = new SodutoRingTimeout(this::stopRinging);
+        // Let a power-button press silence the ring like an incoming call
+        ringStopper = new SodutoRingStopper(context, this::stopRinging);
 
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         Uri ringtone;
@@ -107,6 +114,12 @@ public class FindMyPhonePlugin extends Plugin {
 
     @Override
     public void onDestroy() {
+        if (ringTimeout != null) {
+            ringTimeout.cancel();
+        }
+        if (ringStopper != null) {
+            ringStopper.stop();
+        }
         if (mediaPlayer.isPlaying()) {
             stopPlaying();
         }
@@ -119,32 +132,41 @@ public class FindMyPhonePlugin extends Plugin {
 
     @Override
     public boolean onPacketReceived(@NonNull NetworkPacket np) {
+        // Ring/flash immediately so the device can be located by sound; the notification
+        // below is only there to let the user silence it again once found.
+        startPlaying();
+        startFlashing();
+
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q || LifecycleHelper.isInForeground()) {
             Intent intent = new Intent(context, FindMyPhoneActivity.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             intent.putExtra(FindMyPhoneActivity.EXTRA_DEVICE_ID, getDevice().getDeviceId());
             context.startActivity(intent);
-        } else {
-            if (powerManager.isInteractive()) {
-                startPlaying();
-                startFlashing();
-                showBroadcastNotification();
-            } else {
-                showActivityNotification();
-            }
+        } else if (powerManager.isInteractive()) {
+            // Screen on: an ongoing "Found it" notification, like a call notification
+            showBroadcastNotification();
+        } else if (SodutoFindMyPhone.canUseFullScreenIntent(context)) {
+            // Screen off, full-screen access granted: wake the screen with the ring activity, like a call
+            showActivityNotification();
         }
+        // Screen off without full-screen access: just ring. The power button or the auto-stop
+        // timeout silences it — no lingering notification, the way Google Find My Device behaves.
         return true;
     }
 
-    private void showBroadcastNotification() {
+    private PendingIntent foundItPendingIntent() {
         Intent intent = new Intent(context, FindMyPhoneReceiver.class);
         intent.addFlags(Intent.FLAG_RECEIVER_FOREGROUND);
         intent.setAction(FindMyPhoneReceiver.ACTION_FOUND_IT);
         intent.putExtra(FindMyPhoneReceiver.EXTRA_DEVICE_ID, getDevice().getDeviceId());
 
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
+        return PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
+    }
 
-        createNotification(pendingIntent);
+    private void showBroadcastNotification() {
+        // Screen on: tapping the notification body (or its action) silences the ring. No full-screen
+        // intent here — the screen is already on, so it just shows as an ongoing heads-up.
+        createNotification(foundItPendingIntent(), null);
     }
 
     private void showActivityNotification() {
@@ -152,19 +174,22 @@ public class FindMyPhonePlugin extends Plugin {
         intent.putExtra(FindMyPhoneActivity.EXTRA_DEVICE_ID, getDevice().getDeviceId());
 
         PendingIntent pi = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
-        createNotification(pi);
+        createNotification(pi, pi);
     }
 
-    private void createNotification(PendingIntent pendingIntent) {
+    private void createNotification(PendingIntent contentIntent, @Nullable PendingIntent fullScreenIntent) {
+        // Persistent and call-like: stays put while ringing, with a "Found it" action to silence it.
         NotificationCompat.Builder notification = new NotificationCompat.Builder(context, NotificationHelper.Channels.HIGHPRIORITY);
         notification
                 .setSmallIcon(R.drawable.ic_notification)
-                .setOngoing(false)
-                .setFullScreenIntent(pendingIntent, true)
+                .setContentIntent(contentIntent)
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
-                .setAutoCancel(true)
                 .setOngoing(true)
-                .setContentTitle(context.getString(R.string.findmyphone_found));
+                .setContentTitle(context.getString(R.string.findmyphone_ringing_title))
+                .addAction(R.drawable.ic_notification, context.getString(R.string.findmyphone_found), foundItPendingIntent());
+        if (fullScreenIntent != null) {
+            notification.setFullScreenIntent(fullScreenIntent, true);
+        }
         notification.setGroup("BackgroundService");
 
         notificationManager.notify(notificationId, notification.build());
@@ -177,7 +202,17 @@ public class FindMyPhonePlugin extends Plugin {
             audioManager.setStreamVolume(AudioManager.STREAM_ALARM, audioManager.getStreamMaxVolume(AudioManager.STREAM_ALARM), 0);
 
             mediaPlayer.start();
+            ringTimeout.schedule();
+            ringStopper.start();
         }
+    }
+
+    /** Single funnel for ending a ring from any trigger: the activity, the notification action,
+     *  the power-button stopper or the auto-stop timeout. */
+    void stopRinging() {
+        stopPlaying();
+        stopFlashing();
+        hideNotification();
     }
 
     void startFlashing() {
@@ -191,6 +226,12 @@ public class FindMyPhonePlugin extends Plugin {
     }
 
     void stopPlaying() {
+        if (ringTimeout != null) {
+            ringTimeout.cancel();
+        }
+        if (ringStopper != null) {
+            ringStopper.stop();
+        }
         if (audioManager == null) {
             // The Plugin was destroyed (probably the device disconnected)
             return;

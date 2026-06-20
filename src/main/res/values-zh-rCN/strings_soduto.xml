@@ -42,4 +42,15 @@ SPDX-License-Identifier: GPL-2.0-only OR GPL-3.0-only OR LicenseRef-KDE-Accepted
     <string name="notification_icon_device_shape">匹配主屏幕图标形状</string>
     <string name="notification_filter_section_title">通知过滤器</string>
     <string name="notification_filter_section_desc">选择哪些应用可以向已连接设备发送通知（长按应用可设置每个应用的隐私选项）</string>
+
+    <!-- Find My Phone -->
+    <string name="findmyphone_ringing_title">此设备正在响铃</string>
+    <string name="findmyphone_fullscreen_title">在锁屏上方显示响铃界面</string>
+    <string name="findmyphone_fullscreen_summary_off">屏幕关闭时，在锁屏上方以全屏提醒形式响铃</string>
+    <string name="findmyphone_fullscreen_summary_on">响铃时，Soduto 将在锁屏上方显示全屏提醒</string>
+
+    <!-- Persistent Background Access (app-wide) -->
+    <string name="settings_battery_optimization_title">持续后台访问</string>
+    <string name="settings_battery_optimization_summary_off">Soduto 没有在后台运行以在手机空闲时保持连接的权限</string>
+    <string name="settings_battery_optimization_summary_on">即使手机空闲，Soduto 也会保持连接</string>
 </resources>
