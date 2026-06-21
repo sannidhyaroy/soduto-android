@@ -28,6 +28,7 @@ SPDX-License-Identifier: GPL-2.0-only OR GPL-3.0-only OR LicenseRef-KDE-Accepted
     <string name="notification_channel_webcam">Webcam Streaming</string>
     <string name="webcam_notification_title">Webcam active</string>
     <string name="webcam_notification_stop">Stop</string>
+    <string name="webcam_error_open_app">Open Soduto on your phone to start the webcam</string>
     <string name="webcam_use_front_camera_title">Use front camera</string>
     <string name="webcam_use_front_camera_summary">Use the front-facing camera as the default instead of the rear camera</string>
 

@@ -154,7 +154,18 @@ class WebcamStreamingService : Service() {
                 val codecPref = intent.getStringExtra(EXTRA_CODEC)
                 val cameraPref = intent.getStringExtra(EXTRA_CAMERA) ?: "back"
 
-                startForegroundCompat()
+                // Android 14+ forbids starting a camera/microphone foreground service from the
+                // background. When the request arrives while Soduto is backgrounded, startForeground
+                // is denied, catch it (broadly, so a failed foreground start can never crash the
+                // whole app) and report the failure to the desktop instead.
+                try {
+                    startForegroundCompat()
+                } catch (e: Exception) {
+                    Log.e(TAG, "Could not enter foreground for webcam streaming", e)
+                    reportError(getString(R.string.webcam_error_open_app))
+                    stopSelf()
+                    return super.onStartCommand(intent, flags, startId)
+                }
                 serviceScope.launch {
                     startStreaming(addresses, port, width, height, fps, bitrate, codecPref, cameraPref)
                 }
