@@ -177,7 +177,7 @@ All new fields are optional. Implementations that do not recognise them must sil
 
 * `longclick`: **`Boolean`**
 
-    Fires a single discrete long-press (equivalent to `AccessibilityNodeInfo.ACTION_LONG_CLICK`) at the current cursor position. Distinct from `singlehold`, which starts a drag gesture (`longClickSwipe`). Use `longclick` to open context menus; use `singlehold` + movement + `singlerelease` for drag-and-drop.
+    Fires a single discrete long-press at the current cursor position by dispatching a synthetic touch gesture held for the system long-press timeout — the same touch-simulation mechanism used for regular clicks, just held longer, rather than an accessibility-node action. This makes it work on any on-screen content (custom views, games, WebViews), not only views that expose a long-click accessibility action. Distinct from `singlehold`, which starts a drag gesture (`longClickSwipe`). Use `longclick` to open context menus; use `singlehold` + movement + `singlerelease` for drag-and-drop.
 
 #### Hardware-button actions
 
