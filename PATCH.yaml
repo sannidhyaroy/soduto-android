@@ -908,7 +908,11 @@ patches:
     - file: src/main/java/org/kde/kdeconnect/plugins/webcam/WebcamStreamingService.kt
       intent: >-
         Foreground service for WebcamPlugin: Camera2 capture, MediaCodec H.265/H.264
-        video encoding and AAC audio encoding, UDP frame delivery via WebcamFrameSender
+        video encoding and AAC audio encoding, UDP frame delivery via WebcamFrameSender;
+        in onStartCommand(), catch the SecurityException Android 14+ throws when a
+        camera/microphone foreground service is started while backgrounded, report the
+        failure to the desktop via stream_status (webcam_error_open_app string) instead
+        of letting the uncaught exception crash the app and drop the device connection
 
     - file: src/main/java/org/kde/kdeconnect/plugins/webcam/WebcamFrameSender.kt
       intent: >-
