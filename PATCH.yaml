@@ -307,6 +307,31 @@ patches:
       upstream_issue: null
       drop_when: Upstream fixes the hardcoded prefs name
 
+    - file: src/main/java/org/kde/kdeconnect/plugins/mousereceiver/MouseReceiverPlugin.kt
+      intent: >-
+        Handle longclick (discrete long-press / context menu) and named action field
+        (power, volume_up, volume_down) from incoming kdeconnect.mousepad.request packets;
+        these are Soduto protocol extensions documented in protocol-extensions.md
+      conflict_prone: false
+      resolution_strategy: >-
+        Two independent blocks inserted before the existing click/scroll dispatch in
+        onPacketReceived(). If upstream modifies onPacketReceived(), reapply our longclick
+        and action blocks before the existing click handling.
+      upstream_issue: null
+      drop_when: Upstream adds equivalent longclick and action field support
+
+    - file: src/main/java/org/kde/kdeconnect/plugins/mousereceiver/MouseReceiverService.java
+      intent: >-
+        Add volumeUp() and volumeDown() static methods using AudioManager.STREAM_MUSIC
+        to implement the volume_up and volume_down action values; powerButton() was
+        already present upstream, volumeUp/Down are Soduto additions
+      conflict_prone: false
+      resolution_strategy: >-
+        Two new static methods added alongside the existing powerButton(). If upstream
+        modifies MouseReceiverService, reapply volumeUp() and volumeDown() independently.
+      upstream_issue: null
+      drop_when: Upstream adds equivalent volume action support
+
     - file: src/main/java/org/kde/kdeconnect/plugins/clipboard/ClipboardFloatingActivity.java
       intent: Update ADB command examples in comments to use Soduto package name
       conflict_prone: false
