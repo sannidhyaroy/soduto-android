@@ -28,6 +28,7 @@ SPDX-License-Identifier: GPL-2.0-only OR GPL-3.0-only OR LicenseRef-KDE-Accepted
     <string name="notification_channel_webcam">Трансляция веб-камеры</string>
     <string name="webcam_notification_title">Веб-камера активна</string>
     <string name="webcam_notification_stop">Остановить</string>
+    <string name="webcam_error_open_app">Откройте Soduto на телефоне, чтобы запустить веб-камеру</string>
     <string name="webcam_use_front_camera_title">Использовать фронтальную камеру</string>
     <string name="webcam_use_front_camera_summary">Использовать фронтальную камеру по умолчанию вместо задней</string>
 

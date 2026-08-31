@@ -28,6 +28,7 @@ SPDX-License-Identifier: GPL-2.0-only OR GPL-3.0-only OR LicenseRef-KDE-Accepted
     <string name="notification_channel_webcam">摄像头流式传输</string>
     <string name="webcam_notification_title">摄像头已激活</string>
     <string name="webcam_notification_stop">停止</string>
+    <string name="webcam_error_open_app">在手机上打开 Soduto 以启动摄像头</string>
     <string name="webcam_use_front_camera_title">使用前置摄像头</string>
     <string name="webcam_use_front_camera_summary">默认使用前置摄像头而非后置摄像头</string>
 

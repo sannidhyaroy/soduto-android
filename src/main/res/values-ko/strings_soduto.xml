@@ -28,6 +28,7 @@ SPDX-License-Identifier: GPL-2.0-only OR GPL-3.0-only OR LicenseRef-KDE-Accepted
     <string name="notification_channel_webcam">웹캠 스트리밍</string>
     <string name="webcam_notification_title">웹캠 활성</string>
     <string name="webcam_notification_stop">중지</string>
+    <string name="webcam_error_open_app">웹캠을 시작하려면 휴대폰에서 Soduto를 여세요</string>
     <string name="webcam_use_front_camera_title">전면 카메라 사용</string>
     <string name="webcam_use_front_camera_summary">후면 카메라 대신 전면 카메라를 기본으로 사용</string>
 
