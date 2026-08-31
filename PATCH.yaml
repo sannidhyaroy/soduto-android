@@ -395,19 +395,67 @@ patches:
       upstream_issue: null
       drop_when: Upstream implements conversation pagination with or without hasMore signalling
 
+    - file: src/main/java/org/kde/kdeconnect/plugins/findmyphone/FindMyPhonePlugin.java
+      intent: >-
+        Ring and flash immediately on packet receive (screen-off or not) instead of only
+        after the notification is tapped; route stop-ring through a single stopRinging()
+        funnel used by the notification action, power-button stopper, and auto-stop timeout;
+        screen-on shows an ongoing notification with a "Found it" action, screen-off with
+        USE_FULL_SCREEN_INTENT shows the ring activity; wire SodutoRingTimeout (5 min
+        auto-stop) and SodutoRingStopper (power-button silence)
+      conflict_prone: false
+      resolution_strategy: >-
+        Upstream may eventually rework Find My Phone. Our additions are the immediate-ring
+        block at the top of onPacketReceived(), the stopRinging() funnel, foundItPendingIntent()
+        helper, the SodutoRingTimeout/SodutoRingStopper fields, and changes to createNotification()
+        signature. On conflict, reapply these independently.
+      upstream_issue: null
+      drop_when: Upstream adds immediate-ring, auto-stop, and power-button-silence behaviour
+
+    - file: src/main/java/org/kde/kdeconnect/plugins/findmyphone/FindMyPhoneReceiver.kt
+      intent: >-
+        Call stopRinging() instead of stopPlaying() + stopFlashing() separately so the
+        "Found it" notification is also dismissed when the receiver fires
+      conflict_prone: false
+      resolution_strategy: One-line change. If upstream modifies FindMyPhoneReceiver, reapply.
+      upstream_issue: null
+      drop_when: Upstream adds equivalent stopRinging() funnel
+
+    - file: src/main/java/org/kde/kdeconnect/plugins/findmyphone/FindMyPhoneSettingsFragment.java
+      intent: >-
+        Add full-screen-intent opt-in preference (Android 14+ only, hidden on earlier versions)
+        that opens ACTION_MANAGE_APP_USE_FULL_SCREEN_INTENT; use SodutoGrantedCheckPreference
+        to show granted/not-granted state; call updateReliabilitySummaries() on resume
+      conflict_prone: false
+      resolution_strategy: >-
+        Our additions are fullScreenIntentPreference field, setupReliabilityPreferences()
+        and updateReliabilitySummaries() methods, and their call sites. If upstream modifies
+        FindMyPhoneSettingsFragment, reapply these independently.
+      upstream_issue: null
+      drop_when: Upstream adds full-screen-intent opt-in preference
+
+    - file: src/main/res/xml/findmyphoneplugin_preferences.xml
+      intent: Add full-screen-intent preference entry (SodutoGrantedCheckPreference) to Find My Phone settings
+      conflict_prone: false
+      resolution_strategy: Keep ours. If upstream modifies the preferences XML, reapply our entry.
+      upstream_issue: null
+      drop_when: Upstream adds full-screen-intent preference
+
     - file: src/main/AndroidManifest.xml
       intent: >-
         Change app label to @string/app_name and SendFileActivity label to @string/app_name;
         register KdeConnectDeviceAdminReceiver for LockReceiverPlugin;
         add FOREGROUND_SERVICE_CAMERA and FOREGROUND_SERVICE_MICROPHONE permissions
-        and WebcamStreamingService declaration for WebcamPlugin
+        and WebcamStreamingService declaration for WebcamPlugin;
+        add REQUEST_IGNORE_BATTERY_OPTIMIZATIONS permission for the app-wide
+        "Persistent Background Access" setting in SettingsFragment
       conflict_prone: true
       resolution_strategy: >-
         Upstream frequently touches the manifest. Our changes are two label attributes
-        on <application> and SendFileActivity, the DeviceAdminReceiver block, and
-        the WebcamStreamingService declaration with foregroundServiceType="camera|microphone".
-        On conflict, keep our label values, DeviceAdminReceiver registration, webcam
-        permissions, and WebcamStreamingService entry; accept upstream's other manifest changes.
+        on <application> and SendFileActivity, the DeviceAdminReceiver block,
+        the WebcamStreamingService declaration with foregroundServiceType="camera|microphone",
+        and the REQUEST_IGNORE_BATTERY_OPTIMIZATIONS permission line.
+        On conflict, keep all of the above; accept upstream's other manifest changes.
       upstream_issue: null
       drop_when: Upstream merges webcam plugin (MR !535)
 
@@ -440,9 +488,16 @@ patches:
       drop_when: null
 
     - file: src/main/java/org/kde/kdeconnect/ui/SettingsFragment.kt
-      intent: Change log export filename and file header from "KDE Connect" to "Soduto"
+      intent: >-
+        Change log export filename and file header from "KDE Connect" to "Soduto";
+        add batteryOptimizationPref() using SodutoGrantedCheckPreference so the user
+        can exempt Soduto from battery optimization (REQUEST_IGNORE_BATTERY_OPTIMIZATIONS)
+        to keep the connection alive in Doze
       conflict_prone: false
-      resolution_strategy: Keep ours. Two-line change — if upstream modifies this file, reapply our strings.
+      resolution_strategy: >-
+        Our additions are batteryOptimizationPref(), batteryOptimizationLauncher,
+        updateBatteryOptimizationSummary(), and their wiring in the preference list.
+        If upstream modifies SettingsFragment, reapply these alongside our string changes.
       upstream_issue: null
       drop_when: null
 
@@ -705,6 +760,25 @@ patches:
         Owns all notification icon row UI logic (two-target row via shared
         list_item_two_target_toggle, bottom sheet, master/child toggle sync)
         extracted from NotificationFilterActivity to minimise upstream file changes
+
+    - file: src/main/java/org/kde/kdeconnect/plugins/findmyphone/SodutoFindMyPhone.kt
+      intent: >-
+        Soduto-specific Find My Phone helpers: canUseFullScreenIntent() and
+        fullScreenIntentSettings() for the Android 14+ full-screen-intent opt-in;
+        SodutoRingTimeout (5-minute auto-stop via Handler); SodutoRingStopper
+        (silences the ring when the power button is pressed, with a 1s grace period)
+
+    - file: src/main/java/org/kde/kdeconnect/ui/SodutoGrantedCheckPreference.kt
+      intent: >-
+        Generic settings preference that shows a muted trailing checkmark once its
+        action is already granted, while remaining tappable; used by Find My Phone
+        full-screen-intent preference and the app-wide battery-optimization preference
+
+    - file: src/main/res/drawable/ic_granted_check.xml
+      intent: Muted checkmark vector drawable used as the trailing widget in SodutoGrantedCheckPreference
+
+    - file: src/main/res/layout/preference_widget_granted_check.xml
+      intent: Layout for the trailing granted-check widget shown in SodutoGrantedCheckPreference rows
 
     - file: src/main/java/org/kde/kdeconnect/plugins/sms/SodutoSMSDozeHelper.kt
       intent: >-
